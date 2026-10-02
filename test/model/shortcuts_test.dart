@@ -107,6 +107,39 @@ modes:
     );
   });
 
+  ControlRef controlOf(String reference) => parseShortcuts('''
+modes:
+  - mode: Any Mode
+    shortcuts:
+      - gesture:
+          - press: $reference
+        effect: Something
+''').single.shortcuts.single.gesture.single.control;
+
+  test('reads a range of pads', () {
+    expect(controlOf('pads 1–8'), const PadRange(1, 8));
+    expect(controlOf('pads 9-16'), const PadRange(9, 16));
+  });
+
+  test('reads a choice of Controls', () {
+    expect(
+      controlOf('K1 / K2 / K3'),
+      const ControlChoice([
+        SingleControl(Control.k1),
+        SingleControl(Control.k2),
+        SingleControl(Control.k3),
+      ]),
+    );
+    expect(
+      controlOf('B1 / B2 / B3'),
+      const ControlChoice([
+        SingleControl(Control.b1),
+        SingleControl(Control.b2),
+        SingleControl(Control.b3),
+      ]),
+    );
+  });
+
   group('malformed data names the entry', () {
     void expectError(String yaml, String message) => expect(
       () => parseShortcuts(yaml),
@@ -176,6 +209,26 @@ modes:
       - gesture: [press: pad 17]
         effect: Nothing
 ''', 'Mode "Any Mode", Shortcut 1: unknown Control "pad 17"');
+    });
+
+    test('a pad range out of order', () {
+      expectError('''
+modes:
+  - mode: Any Mode
+    shortcuts:
+      - gesture: [press: pads 8–1]
+        effect: Nothing
+''', 'Mode "Any Mode", Shortcut 1: unknown Control "pads 8–1"');
+    });
+
+    test('a choice with an unknown Control', () {
+      expectError('''
+modes:
+  - mode: Any Mode
+    shortcuts:
+      - gesture: [turn: K1 / K4]
+        effect: Nothing
+''', 'Mode "Any Mode", Shortcut 1: unknown Control "K4"');
     });
   });
 }

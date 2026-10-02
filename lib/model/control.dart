@@ -1,29 +1,35 @@
 /// What kind of physical input a Control is; decides how it is drawn.
 enum ControlKind { button, pad, knob, encoder, fader, functionButton }
 
+/// A button's body colour on the front panel.
+enum ButtonColour { grey, blue, orange }
+
+/// The coloured bar printed on record and transport buttons.
+enum ButtonStripe { red, white, green }
+
 /// A physical input on the MPC Sample, as printed on the front panel
 /// (User Guide p16). Pads are referred to by number; see [ControlRef].
 enum Control {
   sample('SAMPLE'),
   seq('SEQ'),
-  padFx('PAD FX'),
-  knobFx('KNOB FX'),
+  padFx('PAD FX', colour: ButtonColour.orange),
+  knobFx('KNOB FX', colour: ButtonColour.orange),
   shift('SHIFT'),
   padBank('PAD BANK'),
   erase('ERASE'),
   noteRepeat('NOTE REPEAT'),
-  chop('CHOP'),
-  mute('MUTE'),
-  loop('LOOP'),
-  sixteenLevels('16 LEVELS'),
+  chop('CHOP', colour: ButtonColour.blue),
+  mute('MUTE', colour: ButtonColour.blue),
+  loop('LOOP', colour: ButtonColour.blue),
+  sixteenLevels('16 LEVELS', colour: ButtonColour.blue),
   sampleSelect('SAMPLE SELECT'),
   tapTempo('TAP TEMPO'),
   minus('−', symbolName: 'MINUS'),
   plus('+', symbolName: 'PLUS'),
-  sampleRecord('SAMPLE RECORD'),
-  seqRecord('SEQ RECORD'),
-  stop('■', symbolName: 'STOP'),
-  play('▶', symbolName: 'PLAY'),
+  sampleRecord('SAMPLE RECORD', stripe: ButtonStripe.red),
+  seqRecord('SEQ RECORD', stripe: ButtonStripe.red),
+  stop('■', symbolName: 'STOP', stripe: ButtonStripe.white),
+  play('▶', symbolName: 'PLAY', stripe: ButtonStripe.green),
   k1('K1', kind: ControlKind.knob),
   k2('K2', kind: ControlKind.knob),
   k3('K3', kind: ControlKind.knob),
@@ -34,7 +40,13 @@ enum Control {
   b2('B2', kind: ControlKind.functionButton),
   b3('B3', kind: ControlKind.functionButton);
 
-  const Control(this.label, {this.symbolName, this.kind = ControlKind.button});
+  const Control(
+    this.label, {
+    this.symbolName,
+    this.kind = ControlKind.button,
+    this.colour = ButtonColour.grey,
+    this.stripe,
+  });
 
   /// The label or symbol printed on the front panel.
   final String label;
@@ -43,6 +55,12 @@ enum Control {
   final String? symbolName;
 
   final ControlKind kind;
+
+  /// For buttons: the body colour on the front panel.
+  final ButtonColour colour;
+
+  /// For buttons: the coloured bar printed on it, if any.
+  final ButtonStripe? stripe;
 
   /// The name the Shortcut data file uses for this Control: its label,
   /// or a word for those printed as symbols.
@@ -105,4 +123,41 @@ class AnyPad extends ControlRef {
 
   @override
   String toString() => 'any pad';
+}
+
+/// A run of numbered pads, e.g. pads 1–8.
+class PadRange extends ControlRef {
+  const PadRange(this.first, this.last);
+
+  final int first;
+  final int last;
+
+  @override
+  bool operator ==(Object other) =>
+      other is PadRange && other.first == first && other.last == last;
+
+  @override
+  int get hashCode => Object.hash(first, last);
+
+  @override
+  String toString() => 'pads $first–$last';
+}
+
+/// Any one of several Controls, e.g. K1 / K2 / K3.
+class ControlChoice extends ControlRef {
+  const ControlChoice(this.options);
+
+  final List<ControlRef> options;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ControlChoice &&
+      other.options.length == options.length &&
+      other.options.indexed.every((entry) => options[entry.$1] == entry.$2);
+
+  @override
+  int get hashCode => Object.hashAll(options);
+
+  @override
+  String toString() => options.join(' / ');
 }

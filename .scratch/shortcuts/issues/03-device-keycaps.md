@@ -22,9 +22,9 @@ Colours and labels come from the front-panel drawing in the User Guide. See `.sc
 
 **Status:** ready-for-agent
 
-- [ ] Each Control in `model` knows its colour group (grey, blue or orange, plus a red record bar, a white STOP bar or a green PLAY bar), and its kind decides how its keycap is drawn
-- [ ] `model` parses pad ranges and choices of Controls. Unit tests cover pads 1–8, K1 / K2 / K3, B1 / B2 / B3, and the errors for a malformed range or choice
-- [ ] Keycaps are drawn as described for every kind: buttons in each colour group, record bars, STOP, PLAY, pads, any pad, pad ranges, knobs, the ENCODER, B1–B3, the fader, and choices
-- [ ] The `app` test from 02 still passes, with keycap labels still findable as text
-- [ ] Checked by eye in Chrome with a test data file that includes every keycap kind, at phone and desktop widths
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] Each Control in `model` knows its colour group (grey, blue or orange, plus a red record bar, a white STOP bar or a green PLAY bar), and its kind decides how its keycap is drawn
+- [x] `model` parses pad ranges and choices of Controls. Unit tests cover pads 1–8, K1 / K2 / K3, B1 / B2 / B3, and the errors for a malformed range or choice
+- [x] Keycaps are drawn as described for every kind: buttons in each colour group, record bars, STOP, PLAY, pads, any pad, pad ranges, knobs, the ENCODER, B1–B3, the fader, and choices
+- [x] The `app` test from 02 still passes, with keycap labels still findable as text
+- [x] Checked by eye in Chrome with a test data file that includes every keycap kind, at phone and desktop widths
+- [x] `flutter test` and `flutter analyze` pass
