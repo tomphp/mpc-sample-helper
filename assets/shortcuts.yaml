@@ -1,0 +1,36 @@
+# Shortcuts shown by the Shortcuts Tool, grouped by Mode in this order.
+#
+# Each Shortcut has:
+#   gesture: ordered steps, each "action: Control"
+#     actions: press, press twice, hold, release, turn, press and turn,
+#              move, tap
+#     Controls: the label printed on the front panel (e.g. SAMPLE, PAD BANK,
+#               K1, B1, ENCODER, FADER), STOP, PLAY, MINUS or PLUS for the
+#               symbol buttons, "pad 1" to "pad 16", or "any pad"
+#   when:   optional condition, e.g. "while stopped"
+#   effect: what it does
+modes:
+  - mode: Any Mode
+    shortcuts:
+      - gesture:
+          - press twice: STOP
+        effect: Stop all audio
+      - gesture:
+          - hold: SHIFT
+          - press: PAD BANK
+        effect: Select the previous pad bank
+      - gesture:
+          - hold: TAP TEMPO
+          - turn: ENCODER
+        effect: Change the tempo
+      - gesture:
+          - hold: TAP TEMPO
+          - press and turn: ENCODER
+        effect: Change the tempo's decimals
+
+  - mode: Sample Mode
+    shortcuts:
+      - gesture:
+          - hold: SAMPLE
+          - press: any pad
+        effect: Select the pad without playing it

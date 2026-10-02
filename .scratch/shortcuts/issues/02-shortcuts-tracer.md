@@ -22,17 +22,17 @@ This ticket adds to `model`:
 
 **Status:** ready-for-agent
 
-- [ ] The data file holds the five verified Shortcuts, under Any Mode and Sample Mode as appropriate
-- [ ] `model` covers every MPC Sample Control from the front-panel drawing, each with its label and kind. STOP and PLAY are symbols
-- [ ] All eight actions are recognised: press, press twice, hold, release, turn, press and turn, move, tap
-- [ ] `model` unit tests:
+- [x] The data file holds the five verified Shortcuts, under Any Mode and Sample Mode as appropriate
+- [x] `model` covers every MPC Sample Control from the front-panel drawing, each with its label and kind. STOP and PLAY are symbols
+- [x] All eight actions are recognised: press, press twice, hold, release, turn, press and turn, move, tap
+- [x] `model` unit tests:
   - Modes and Shortcuts come back in file order, with steps, conditions and effects intact
   - each of the eight actions is parsed
   - "any pad" resolves
   - errors name the entry for an unknown Control, an unknown action, a missing effect, an empty Gesture, and a Mode with no name
-- [ ] A test checks the real bundled data file parses with no errors
-- [ ] The Shortcuts Tool shows the intro sentence, then the Mode headings in amber, then each Shortcut's keycaps with action words, `+` between steps, any condition, and the effect
-- [ ] Control labels are uppercase as printed. Action words, conditions and effects are normal case
-- [ ] An `app` test checks the Tool against a small test data file: the Mode headings are in order, and the keycap labels, action words and effects are shown
-- [ ] Checked by eye in Chrome at phone and desktop widths
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] A test checks the real bundled data file parses with no errors
+- [x] The Shortcuts Tool shows the intro sentence, then the Mode headings in amber, then each Shortcut's keycaps with action words, `+` between steps, any condition, and the effect
+- [x] Control labels are uppercase as printed. Action words, conditions and effects are normal case
+- [x] An `app` test checks the Tool against a small test data file: the Mode headings are in order, and the keycap labels, action words and effects are shown
+- [x] Checked by eye in Chrome at phone and desktop widths
+- [x] `flutter test` and `flutter analyze` pass
