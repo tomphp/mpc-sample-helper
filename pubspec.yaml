@@ -22,6 +22,7 @@ flutter:
   assets:
     - assets/fonts/OFL.txt
     - assets/shortcuts.yaml
+    - assets/tips.yaml
 
   fonts:
     - family: RobotoMono

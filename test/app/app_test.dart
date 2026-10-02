@@ -52,19 +52,25 @@ Future<void> chooseTimeSignature(WidgetTester tester, String label) async {
 }
 
 void main() {
-  testWidgets('launches on STEP EDIT with STEP EDIT and Shortcuts tabs', (
-    tester,
-  ) async {
+  testWidgets('launches on STEP EDIT with STEP EDIT, Shortcuts and Tips & '
+      'Tricks tabs', (tester) async {
     await tester.pumpWidget(const MpcSampleHelperApp());
 
     final bar = find.byType(NavigationBar);
+    final tabs = [
+      for (final label in ['STEP EDIT', 'Shortcuts', 'Tips & Tricks'])
+        find.descendant(of: bar, matching: find.text(label)),
+    ];
+    for (final tab in tabs) {
+      expect(tab, findsOneWidget);
+    }
     expect(
-      find.descendant(of: bar, matching: find.text('STEP EDIT')),
-      findsOneWidget,
+      tester.getTopLeft(tabs[0]).dx,
+      lessThan(tester.getTopLeft(tabs[1]).dx),
     );
     expect(
-      find.descendant(of: bar, matching: find.text('Shortcuts')),
-      findsOneWidget,
+      tester.getTopLeft(tabs[1]).dx,
+      lessThan(tester.getTopLeft(tabs[2]).dx),
     );
     expect(tester.widget<NavigationBar>(bar).selectedIndex, 0);
   });

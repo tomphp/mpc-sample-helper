@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'shortcuts_tool.dart';
 import 'step_edit_tool.dart';
 import 'theme.dart';
+import 'tips_tool.dart';
 
 class MpcSampleHelperApp extends StatelessWidget {
   const MpcSampleHelperApp({super.key});
@@ -29,6 +30,7 @@ class _Tool {
 const _tools = [
   _Tool('STEP EDIT', Icons.grid_on, StepEditTool()),
   _Tool('Shortcuts', Icons.keyboard, ShortcutsTool()),
+  _Tool('Tips & Tricks', Icons.lightbulb_outline, TipsTool()),
 ];
 
 class _ToolShell extends StatefulWidget {

@@ -1,0 +1,22 @@
+# Tips shown by the Tips & Tricks Tool, in this order.
+#
+# Each Tip has:
+#   title: what to call it
+#   outcome: one line on what it achieves
+#   steps: the numbered steps, as text
+#   note: optional caveat shown after the steps
+#
+# In steps and notes, a Control in square brackets is drawn as a keycap,
+# e.g. [SHIFT], [K2], [pad 14]. Write Controls as the Shortcut data file
+# does: the label printed on the front panel, STOP, PLAY, MINUS or PLUS for
+# the symbol buttons, "pad 1" to "pad 16", a range such as "pads 1–8",
+# "any pad", or a choice such as "K1 / K2 / K3". Shift Labels and screen
+# names (e.g. RECALL, INPUT CONFIG) are plain text. Quote a step that
+# starts with a bracket or contains ": ", e.g. - "[SHIFT] + [SAMPLE]".
+tips:
+  - title: Resample a live performance
+    outcome: Capture a live performance as a new sample
+    steps:
+      - Hold [SHIFT] and press [SAMPLE] to open INPUT CONFIG, and set Source to Resample.
+      - "Play live: hit pads, play sequences, use [PAD FX], [KNOB FX] or FLEX BEAT, turn [K1 / K2 / K3] or move the [FADER]."
+      - Hold [SHIFT] and press [SAMPLE RECORD] to RECALL the last 25 seconds onto the next available pad.
