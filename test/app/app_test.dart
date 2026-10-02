@@ -73,6 +73,20 @@ void main() {
     expect(tester.widget<NavigationBar>(bar).selectedIndex, 0);
   });
 
+  testWidgets(
+    'the app is dark with Roboto Mono even when the system is light',
+    (tester) async {
+      tester.platformDispatcher.platformBrightnessTestValue = Brightness.light;
+      addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+
+      await tester.pumpWidget(const MpcSampleHelperApp());
+      final theme = Theme.of(tester.element(find.byType(StepEditTool)));
+
+      expect(theme.brightness, Brightness.dark);
+      expect(theme.textTheme.bodyMedium!.fontFamily, 'RobotoMono');
+    },
+  );
+
   testWidgets('STEP EDIT starts at Q 1/16 and lists its Grid Lines', (
     tester,
   ) async {

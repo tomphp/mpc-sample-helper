@@ -26,7 +26,12 @@ class StandardStepsTable extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Standard Steps in 4/4', style: theme.textTheme.titleMedium),
+        Text(
+          'Standard Steps in 4/4',
+          style: theme.textTheme.titleMedium!.copyWith(
+            color: HelperColors.of(context).label,
+          ),
+        ),
         const SizedBox(height: 8),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,

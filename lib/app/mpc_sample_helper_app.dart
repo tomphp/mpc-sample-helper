@@ -11,8 +11,7 @@ class MpcSampleHelperApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MPC Sample Helper',
-      theme: buildTheme(Brightness.light),
-      darkTheme: buildTheme(Brightness.dark),
+      theme: buildTheme(),
       home: const _ToolShell(),
     );
   }

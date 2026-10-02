@@ -13,12 +13,12 @@ Roboto Mono is bundled as a font asset and used everywhere, with no runtime fetc
 
 **Status:** ready-for-agent
 
-- [ ] One dark theme replaces the light and dark themes. The app is dark even when the platform brightness is light
-- [ ] The palette above is defined in one place in the theme, and the highlight is the crimson
-- [ ] Roboto Mono is bundled (with its licence) and set as the app-wide font
-- [ ] Field labels are amber, and the bottom bar's selected tab uses the mint accent
-- [ ] The Timeline uses a dark grey Bar with white Beat lines. Inexact labels are crimson
-- [ ] An `app` test checks the theme is dark under light platform brightness and uses Roboto Mono
-- [ ] STEP EDIT's existing `app` tests pass unchanged
-- [ ] Checked by eye in Chrome at phone and desktop widths: STEP EDIT at 3/4 with 1/8T (zoomed out and in), and the Shortcuts Tool
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] One dark theme replaces the light and dark themes. The app is dark even when the platform brightness is light
+- [x] The palette above is defined in one place in the theme, and the highlight is the crimson
+- [x] Roboto Mono is bundled (with its licence) and set as the app-wide font
+- [x] Field labels are amber, and the bottom bar's selected tab uses the mint accent
+- [x] The Timeline uses a dark grey Bar with white Beat lines. Inexact labels are crimson
+- [x] An `app` test checks the theme is dark under light platform brightness and uses Roboto Mono
+- [x] STEP EDIT's existing `app` tests pass unchanged
+- [x] Checked by eye in Chrome at phone and desktop widths: STEP EDIT at 3/4 with 1/8T (zoomed out and in), and the Shortcuts Tool
+- [x] `flutter test` and `flutter analyze` pass

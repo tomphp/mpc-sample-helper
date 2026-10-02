@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../model/model.dart';
 import 'grid_line_table.dart';
 import 'standard_steps_table.dart';
+import 'theme.dart';
 import 'timeline.dart';
 
 class StepEditTool extends StatefulWidget {
@@ -25,7 +26,11 @@ class _StepEditToolState extends State<StepEditTool> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Time Signature', style: Theme.of(context).textTheme.labelLarge),
+          Text(
+            'Time Signature',
+            style: Theme.of(context).textTheme.labelLarge!
+                .copyWith(color: HelperColors.of(context).label),
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 12,

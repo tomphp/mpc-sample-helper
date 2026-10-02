@@ -50,7 +50,7 @@ class Timeline extends StatelessWidget {
         bar: scheme.surfaceContainerHighest,
         beat: scheme.onSurface,
         gridLine: scheme.outline,
-        deviceBeat: scheme.outline.withValues(alpha: 0.45),
+        deviceBeat: scheme.outline.withValues(alpha: 0.75),
         label: scheme.onSurfaceVariant,
         highlight: HelperColors.of(context).highlight,
       ),
