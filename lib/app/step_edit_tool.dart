@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../model/model.dart';
 import 'grid_line_table.dart';
 import 'standard_steps_table.dart';
+import 'timeline.dart';
 
 class StepEditTool extends StatefulWidget {
   const StepEditTool({super.key});
@@ -59,6 +60,8 @@ class _StepEditToolState extends State<StepEditTool> {
               if (quantize != null) setState(() => _quantize = quantize);
             },
           ),
+          const SizedBox(height: 24),
+          Timeline(layout: layout),
           const SizedBox(height: 16),
           GridLineTable(
             key: const Key('grid-line-table'),
