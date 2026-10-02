@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../model/model.dart';
 import 'grid_line_table.dart';
+import 'standard_steps_table.dart';
 
 class StepEditTool extends StatefulWidget {
   const StepEditTool({super.key});
@@ -38,6 +39,11 @@ class _StepEditToolState extends State<StepEditTool> {
           GridLineTable(
             key: const Key('grid-line-table'),
             gridLines: layout.gridLines,
+          ),
+          const SizedBox(height: 24),
+          StandardStepsTable(
+            key: const Key('standard-steps'),
+            current: _quantize,
           ),
         ],
       ),

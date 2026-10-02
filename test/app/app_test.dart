@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mpc_sample_helper/app/mpc_sample_helper_app.dart';
+import 'package:mpc_sample_helper/app/step_edit_tool.dart';
+import 'package:mpc_sample_helper/app/theme.dart';
 import 'package:mpc_sample_helper/model/model.dart';
 
 Finder gridLineTableText(String text) => find.descendant(
@@ -8,12 +10,23 @@ Finder gridLineTableText(String text) => find.descendant(
   matching: find.text(text),
 );
 
+Finder standardStepsText(String text) => find.descendant(
+  of: find.byKey(const Key('standard-steps')),
+  matching: find.text(text),
+);
+
+Color? highlightColour(WidgetTester tester) =>
+    HelperColors.of(tester.element(find.byType(StepEditTool))).highlight;
+
+Color? textColour(WidgetTester tester, Finder finder) =>
+    tester.widget<Text>(finder).style?.color;
+
 final qDropdown = find.byType(DropdownMenu<Quantize>);
 
 Future<void> chooseQ(WidgetTester tester, String label) async {
   await tester.tap(qDropdown);
   await tester.pumpAndSettle();
-  await tester.tap(find.text(label).last);
+  await tester.tap(find.widgetWithText(MenuItemButton, label).last);
   await tester.pumpAndSettle();
 }
 
@@ -55,6 +68,20 @@ void main() {
     expect(gridLineTableText('1:240'), findsNothing);
     expect(gridLineTableText('2:000'), findsOneWidget);
     expect(gridLineTableText('4:000'), findsOneWidget);
+  });
+
+  testWidgets('Standard Steps in 4/4 highlights the current Q', (tester) async {
+    await tester.pumpWidget(const MpcSampleHelperApp());
+    final highlight = highlightColour(tester);
+
+    expect(find.text('Standard Steps in 4/4'), findsOneWidget);
+    expect(textColour(tester, standardStepsText('240')), highlight);
+    expect(textColour(tester, standardStepsText('960')), isNot(highlight));
+
+    await chooseQ(tester, '1/4');
+
+    expect(textColour(tester, standardStepsText('960')), highlight);
+    expect(textColour(tester, standardStepsText('240')), isNot(highlight));
   });
 
   testWidgets('Shortcuts shows its intro sentence', (tester) async {
