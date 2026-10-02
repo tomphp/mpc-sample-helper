@@ -31,14 +31,16 @@ class Keycap extends StatelessWidget {
       children: [
         Text(step.action.word, style: Theme.of(context).textTheme.labelSmall),
         const SizedBox(height: 4),
-        _ControlDrawing(step.control),
+        ControlKeycap(step.control),
       ],
     );
   }
 }
 
-class _ControlDrawing extends StatelessWidget {
-  const _ControlDrawing(this.control);
+/// A drawing of a Control as it looks on the front panel, with no action
+/// word.
+class ControlKeycap extends StatelessWidget {
+  const ControlKeycap(this.control, {super.key});
 
   final ControlRef control;
 
@@ -63,7 +65,7 @@ class _ControlDrawing extends StatelessWidget {
     ControlChoice(:final options) => Row(
       mainAxisSize: MainAxisSize.min,
       children: separated([
-        for (final option in options) _ControlDrawing(option),
+        for (final option in options) ControlKeycap(option),
       ], const _Separator('/')),
     ),
   };

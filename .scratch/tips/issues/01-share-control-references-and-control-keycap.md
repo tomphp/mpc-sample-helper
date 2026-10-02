@@ -6,10 +6,10 @@
 
 **Status:** ready-for-agent
 
-- [ ] Control-reference parsing is callable from outside the Shortcut parser, and the Shortcut parser uses it
-- [ ] Malformed Control references still give the same error messages in the Shortcut data file
-- [ ] A public `ControlKeycap` draws any Control reference without an action word
-- [ ] `Keycap` is built from `ControlKeycap` and its appearance is unchanged
-- [ ] All existing tests pass unchanged
-- [ ] Checked by eye in Chrome: the Shortcuts Tool looks the same as before
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] Control-reference parsing is callable from outside the Shortcut parser, and the Shortcut parser uses it
+- [x] Malformed Control references still give the same error messages in the Shortcut data file
+- [x] A public `ControlKeycap` draws any Control reference without an action word
+- [x] `Keycap` is built from `ControlKeycap` and its appearance is unchanged
+- [x] All existing tests pass unchanged
+- [x] Checked by eye in Chrome: the Shortcuts Tool looks the same as before
+- [x] `flutter test` and `flutter analyze` pass

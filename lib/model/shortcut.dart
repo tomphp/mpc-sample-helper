@@ -137,39 +137,10 @@ GestureStep _parseStep(String where, Object? step) {
   return GestureStep(action, _parseControl(where, '$value'));
 }
 
-final _padPattern = RegExp(r'^pad (\d+)$');
-final _padRangePattern = RegExp(r'^pads (\d+)[–-](\d+)$');
-
-bool _isPadNumber(int number) => number >= 1 && number <= 16;
-
 ControlRef _parseControl(String where, String reference) {
-  if (reference.contains(' / ')) {
-    return ControlChoice([
-      for (final option in reference.split(' / '))
-        _parseControl(where, option.trim()),
-    ]);
+  try {
+    return ControlRef.parse(reference);
+  } on UnknownControlException catch (error) {
+    throw ShortcutDataException('$where: unknown Control "${error.reference}"');
   }
-
-  if (reference == 'any pad') return const AnyPad();
-
-  final pad = _padPattern.firstMatch(reference);
-  if (pad != null) {
-    final number = int.parse(pad.group(1)!);
-    if (_isPadNumber(number)) return Pad(number);
-  }
-
-  final range = _padRangePattern.firstMatch(reference);
-  if (range != null) {
-    final first = int.parse(range.group(1)!);
-    final last = int.parse(range.group(2)!);
-    if (_isPadNumber(first) && _isPadNumber(last) && first < last) {
-      return PadRange(first, last);
-    }
-  }
-
-  final control = Control.byReference(reference);
-  if (control == null) {
-    throw ShortcutDataException('$where: unknown Control "$reference"');
-  }
-  return SingleControl(control);
 }

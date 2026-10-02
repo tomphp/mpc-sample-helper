@@ -73,6 +73,57 @@ enum Control {
 /// Which Control (or pad) a Gesture step acts on.
 sealed class ControlRef {
   const ControlRef();
+
+  /// Reads a reference as the data files write it: a front-panel label,
+  /// a symbol's word (e.g. STOP), "pad 1" to "pad 16", a range such as
+  /// "pads 1–8", "any pad", or a choice such as "K1 / K2 / K3".
+  ///
+  /// Throws [UnknownControlException] naming the part it doesn't know.
+  static ControlRef parse(String reference) {
+    if (reference.contains(' / ')) {
+      return ControlChoice([
+        for (final option in reference.split(' / ')) parse(option.trim()),
+      ]);
+    }
+
+    if (reference == 'any pad') return const AnyPad();
+
+    final pad = _padPattern.firstMatch(reference);
+    if (pad != null) {
+      final number = int.parse(pad.group(1)!);
+      if (_isPadNumber(number)) return Pad(number);
+    }
+
+    final range = _padRangePattern.firstMatch(reference);
+    if (range != null) {
+      final first = int.parse(range.group(1)!);
+      final last = int.parse(range.group(2)!);
+      if (_isPadNumber(first) && _isPadNumber(last) && first < last) {
+        return PadRange(first, last);
+      }
+    }
+
+    final control = Control.byReference(reference);
+    if (control == null) throw UnknownControlException(reference);
+    return SingleControl(control);
+  }
+}
+
+final _padPattern = RegExp(r'^pad (\d+)$');
+final _padRangePattern = RegExp(r'^pads (\d+)[–-](\d+)$');
+
+bool _isPadNumber(int number) => number >= 1 && number <= 16;
+
+/// A Control reference names no Control on the front panel.
+class UnknownControlException implements Exception {
+  const UnknownControlException(this.reference);
+
+  /// The part of the reference that isn't a Control, e.g. "K4" in
+  /// "K1 / K4".
+  final String reference;
+
+  @override
+  String toString() => 'UnknownControlException: unknown Control "$reference"';
 }
 
 class SingleControl extends ControlRef {
