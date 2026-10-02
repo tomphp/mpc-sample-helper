@@ -2,6 +2,8 @@
 
 Status: ready-for-agent
 
+> **Revised by issue 07 / ADR 0003.** The device supports real Time Signatures, so everything below about 4/4 emulation is out of date. That covers the Device Bar and Device Beats, the 3840-Tick Bar, Inexact Positions and rounding, the two Time Signature dropdowns, and "Standard Steps in 4/4". Where this spec and issue 07 disagree, issue 07 wins.
+
 ## Problem Statement
 
 MPC Sample users place events in Step Edit by typing a Position (Device Beat and Tick, e.g. `2:320`). Working out which Position corresponds to a given Grid Line means doing arithmetic in Ticks (960 per Device Beat) in their head. It gets harder when they want a Time Signature other than 4/4: the device only supports 4/4, so users fake other Time Signatures by spreading the Beats across a 4/4 Device Bar, and the resulting Positions are unintuitive and often not whole Ticks (e.g. 3/4 puts Beat 2 at `2:320`; 3/4 with 1/8T puts a Grid Line at `1:426.7`).

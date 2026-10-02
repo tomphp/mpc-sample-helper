@@ -1,0 +1,3 @@
+# Bars use the device's real Time Signatures
+
+Supersedes ADR 0002. We had assumed the MPC Sample only supported 4/4 and emulated other Time Signatures by stretching their Beats across 3840 Ticks. The User Guide (SHIFT + K2 in Sequence Mode and Step Edit) shows that the device sets a real Time Signature per Project. So a Bar is now its true length, Beats × Ticks per Beat: 960 Ticks per Beat in x/4 and 480 in x/8, so 3/4 is 2880 Ticks and 7/8 is 3360. Positions count those Beats (6/8 runs `1:000` to `6:479`), and Quantize keeps its absolute note value (1/16 is always 240 Ticks). Every Position is now a whole number of Ticks, so the Device Bar, Device Beat and Inexact Position concepts are gone.

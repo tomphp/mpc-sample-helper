@@ -1,29 +1,34 @@
-/// The number of Beats in a Bar and the note value of each Beat.
-/// Emulated: the device itself only supports 4/4 (ADR 0002).
-class TimeSignature {
-  const TimeSignature(this.beats, this.noteValue)
-    : assert(beats >= 1 && beats <= 16),
-      assert(noteValue == 4 || noteValue == 8);
+/// Ticks in one quarter note.
+const ticksPerQuarterNote = 960;
 
-  /// 4/4, the device's own Time Signature.
-  static const standard = TimeSignature(4, 4);
+/// The number of Beats in a Bar and the note value of each Beat: exactly the
+/// Time Signatures the device offers, in its order (ADR 0003).
+enum TimeSignature {
+  twoFour(2, 4),
+  threeFour(3, 4),
+  fourFour(4, 4),
+  fiveFour(5, 4),
+  sixFour(6, 4),
+  sevenFour(7, 4),
+  sixEight(6, 8),
+  sevenEight(7, 8),
+  nineEight(9, 8),
+  tenEight(10, 8),
+  elevenEight(11, 8),
+  twelveEight(12, 8);
 
-  static const beatChoices = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, //
-  ];
-  static const noteValueChoices = [4, 8];
+  const TimeSignature(this.beats, this.noteValue);
+
+  /// 4/4, the default.
+  static const standard = fourFour;
 
   final int beats;
   final int noteValue;
 
-  @override
-  bool operator ==(Object other) =>
-      other is TimeSignature &&
-      other.beats == beats &&
-      other.noteValue == noteValue;
+  /// 960 for a quarter note, 480 for an eighth.
+  int get ticksPerBeat => ticksPerQuarterNote * 4 ~/ noteValue;
 
-  @override
-  int get hashCode => Object.hash(beats, noteValue);
+  int get ticksPerBar => beats * ticksPerBeat;
 
   @override
   String toString() => '$beats/$noteValue';

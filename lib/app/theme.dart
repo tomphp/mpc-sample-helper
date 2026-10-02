@@ -21,13 +21,13 @@ abstract final class DevicePalette {
 class HelperColors extends ThemeExtension<HelperColors> {
   const HelperColors({required this.highlight});
 
-  /// Marks Inexact Positions and the current Q.
+  /// Marks the current Q.
   final Color highlight;
 
   static HelperColors of(BuildContext context) =>
       Theme.of(context).extension<HelperColors>()!;
 
-  /// Text style for Inexact Positions and the current Q.
+  /// Text style for the current Q.
   TextStyle get highlightStyle =>
       TextStyle(color: highlight, fontWeight: FontWeight.bold);
 

@@ -6,7 +6,7 @@ List<String> positions(BarLayout layout) => [
 ];
 
 void main() {
-  const fourFour = TimeSignature(4, 4);
+  const fourFour = TimeSignature.fourFour;
 
   test('4/4 at 1/16 has 16 Grid Lines from 1:000 to 4:720', () {
     final layout = layoutBar(fourFour, Quantize.sixteenth);
@@ -27,7 +27,7 @@ void main() {
     ]);
   });
 
-  test('every Quantize gives only exact Positions in 4/4', () {
+  test('every Quantize gives the expected number of Grid Lines in 4/4', () {
     const gridLineCounts = {
       Quantize.quarter: 4,
       Quantize.quarterTriplet: 6,
@@ -44,11 +44,6 @@ void main() {
         in gridLineCounts.entries) {
       final layout = layoutBar(fourFour, quantize);
       expect(layout.gridLines, hasLength(count), reason: quantize.label);
-      expect(
-        layout.gridLines.where((line) => line.position.isInexact),
-        isEmpty,
-        reason: quantize.label,
-      );
     }
   });
 
@@ -80,7 +75,7 @@ void main() {
     );
   });
 
-  test('4/4 has four Beats, each on a Device Beat', () {
+  test('4/4 has four evenly spaced Beats', () {
     final layout = layoutBar(fourFour, Quantize.sixteenth);
 
     expect([for (final beat in layout.beats) beat.number], [1, 2, 3, 4]);
@@ -90,14 +85,13 @@ void main() {
         0, 0.25, 0.5, 0.75, //
       ],
     );
-    expect(layout.deviceBeats, [0, 0.25, 0.5, 0.75]);
   });
 
-  group('emulated Time Signatures', () {
-    test('3/4 at 1/4 puts its Beats at 1:000, 2:320 and 3:640', () {
-      final layout = layoutBar(const TimeSignature(3, 4), Quantize.quarter);
+  group('other Time Signatures', () {
+    test('3/4 at 1/4 puts its Beats at 1:000, 2:000 and 3:000', () {
+      final layout = layoutBar(TimeSignature.threeFour, Quantize.quarter);
 
-      expect(positions(layout), ['1:000', '2:320', '3:640']);
+      expect(positions(layout), ['1:000', '2:000', '3:000']);
       expect([for (final line in layout.gridLines) line.beat], [1, 2, 3]);
       expect(
         [for (final beat in layout.beats) beat.barFraction],
@@ -105,56 +99,54 @@ void main() {
       );
     });
 
-    test('3/4 at 1/8T has Inexact Positions rounded to one decimal place', () {
-      final layout = layoutBar(
-        const TimeSignature(3, 4),
-        Quantize.eighthTriplet,
-      );
-      final lines = layout.gridLines;
+    test('6/8 at 1/16 counts six eighth-note Beats of 480 Ticks', () {
+      final layout = layoutBar(TimeSignature.sixEight, Quantize.sixteenth);
 
-      expect(positions(layout).take(4), [
-        '1:000',
-        '1:426.7',
-        '1:853.3',
-        '2:320',
+      expect(positions(layout), [
+        '1:000', '1:240', '2:000', '2:240', '3:000', '3:240', //
+        '4:000', '4:240', '5:000', '5:240', '6:000', '6:240',
       ]);
       expect(
-        [for (final line in lines.take(4)) line.position.isInexact],
-        [false, true, true, false],
+        [for (final line in layout.gridLines) line.beat],
+        [1, null, 2, null, 3, null, 4, null, 5, null, 6, null],
       );
+      expect(layout.beats, hasLength(6));
     });
 
     test('7/8 at 1/4 leaves a short final gap', () {
-      final layout = layoutBar(const TimeSignature(7, 8), Quantize.quarter);
+      final layout = layoutBar(TimeSignature.sevenEight, Quantize.quarter);
 
-      expect(positions(layout), ['1:000', '2:137.1', '3:274.3', '4:411.4']);
+      expect(positions(layout), ['1:000', '3:000', '5:000', '7:000']);
       expect([for (final line in layout.gridLines) line.beat], [1, 3, 5, 7]);
       expect(layout.gridLines.last.barFraction, closeTo(6 / 7, 1e-9));
     });
 
-    test('1/4 at 1/4 is a single Grid Line on Beat 1', () {
-      final layout = layoutBar(const TimeSignature(1, 4), Quantize.quarter);
+    test('12/8 at 1/8T crosses Beats between Grid Lines', () {
+      final layout = layoutBar(
+        TimeSignature.twelveEight,
+        Quantize.eighthTriplet,
+      );
 
-      expect(positions(layout), ['1:000']);
-      expect([for (final line in layout.gridLines) line.beat], [1]);
-      expect(layout.beats, hasLength(1));
+      expect(positions(layout).take(5), [
+        '1:000', '1:320', '2:160', '3:000', '3:320', //
+      ]);
+      expect(layout.gridLines, hasLength(18));
+      expect(layout.gridLines.last.position.toString(), '12:160');
     });
 
-    test('5/8 at 1/8 spreads five exact Beats across the Device Bar', () {
-      final layout = layoutBar(const TimeSignature(5, 8), Quantize.eighth);
+    test('2/4 at 1/4 is two Grid Lines, one on each Beat', () {
+      final layout = layoutBar(TimeSignature.twoFour, Quantize.quarter);
 
-      expect(positions(layout), ['1:000', '1:768', '2:576', '3:384', '4:192']);
-      expect([for (final line in layout.gridLines) line.beat], [1, 2, 3, 4, 5]);
+      expect(positions(layout), ['1:000', '2:000']);
+      expect([for (final line in layout.gridLines) line.beat], [1, 2]);
     });
 
-    test('16/8 at 1/16 has 32 Grid Lines, every other one on a Beat', () {
-      final layout = layoutBar(const TimeSignature(16, 8), Quantize.sixteenth);
+    test('12/8 at 1/64 ends at 12:420', () {
+      final layout = layoutBar(TimeSignature.twelveEight, Quantize.sixtyFourth);
 
-      expect(layout.gridLines, hasLength(32));
-      expect(layout.gridLines.last.position.toString(), '4:840');
-      expect(layout.gridLines[1].beat, isNull);
-      expect(layout.gridLines[30].beat, 16);
-      expect(layout.beats, hasLength(16));
+      expect(layout.gridLines, hasLength(96));
+      expect(layout.gridLines.last.position.toString(), '12:420');
+      expect(layout.beats, hasLength(12));
     });
   });
 }

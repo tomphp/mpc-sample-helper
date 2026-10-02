@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../model/model.dart';
-import 'theme.dart';
 
 /// Every Grid Line in the Bar with its Position and, if it lands on one,
 /// its Beat.
@@ -12,25 +11,21 @@ class GridLineTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final highlightStyle = HelperColors.of(context).highlightStyle;
     return DataTable(
       columns: const [
         DataColumn(label: Text('Grid Line'), numeric: true),
         DataColumn(label: Text('Position')),
         DataColumn(label: Text('Beat'), numeric: true),
       ],
-      rows: [
-        for (final line in gridLines)
-          _row(line, line.position.isInexact ? highlightStyle : null),
-      ],
+      rows: [for (final line in gridLines) _row(line)],
     );
   }
 
-  DataRow _row(GridLine line, TextStyle? style) => DataRow(
+  DataRow _row(GridLine line) => DataRow(
     cells: [
-      DataCell(Text('${line.number}', style: style)),
-      DataCell(Text('${line.position}', style: style)),
-      DataCell(Text(line.beat == null ? '' : '${line.beat}', style: style)),
+      DataCell(Text('${line.number}')),
+      DataCell(Text('${line.position}')),
+      DataCell(Text(line.beat == null ? '' : '${line.beat}')),
     ],
   );
 }

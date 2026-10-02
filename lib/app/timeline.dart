@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../model/model.dart';
-import 'theme.dart';
 
 /// One Bar drawn across the available width: numbered Beat lines along the
-/// top, a marker at every Grid Line, faint Device Beat markers along the
-/// bottom, and Grid Line Positions labelled wherever they fit.
+/// top, a marker at every Grid Line, and Grid Line Positions labelled
+/// along the bottom wherever they fit.
 ///
 /// Zoomed in, the Timeline is made wide enough to label every Grid Line and
 /// scrolls sideways.
@@ -15,7 +14,7 @@ class Timeline extends StatelessWidget {
   final BarLayout layout;
   final bool zoomedIn;
 
-  static const height = 132.0;
+  static const height = 124.0;
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +49,7 @@ class Timeline extends StatelessWidget {
         bar: scheme.surfaceContainerHighest,
         beat: scheme.onSurface,
         gridLine: scheme.outline,
-        deviceBeat: scheme.outline.withValues(alpha: 0.75),
         label: scheme.onSurfaceVariant,
-        highlight: HelperColors.of(context).highlight,
       ),
     );
   }
@@ -63,9 +60,7 @@ typedef _TimelineColours = ({
   Color bar,
   Color beat,
   Color gridLine,
-  Color deviceBeat,
   Color label,
-  Color highlight,
 });
 
 class _TimelinePainter extends CustomPainter {
@@ -86,13 +81,7 @@ class _TimelinePainter extends CustomPainter {
 
   late final List<TextPainter> _labels = [
     for (final line in layout.gridLines)
-      _layoutText(
-        '${line.position}',
-        textStyle.copyWith(
-          color: line.position.isInexact ? colours.highlight : colours.label,
-          fontWeight: line.position.isInexact ? FontWeight.bold : null,
-        ),
-      ),
+      _layoutText('${line.position}', textStyle.copyWith(color: colours.label)),
   ];
 
   late final double _widestLabel = _labels.fold(
@@ -104,8 +93,7 @@ class _TimelinePainter extends CustomPainter {
   static const _inset = 24.0;
   static const _barTop = 22.0;
   static const _barBottom = 82.0;
-  static const _deviceBeatMarker = 8.0;
-  static const _labelTop = _barBottom + _deviceBeatMarker + 6;
+  static const _labelTop = _barBottom + 6;
   static const _labelGap = 8.0;
 
   /// The Timeline width at which every Grid Line's label fits.
@@ -159,25 +147,6 @@ class _TimelinePainter extends CustomPainter {
         textStyle.copyWith(color: colours.beat, fontWeight: FontWeight.bold),
         centreX: beatX,
         top: 2,
-      );
-    }
-
-    final deviceBeatPaint = Paint()..color = colours.deviceBeat;
-    for (final deviceBeat in layout.deviceBeats) {
-      final markerX = x(deviceBeat);
-      canvas.drawPath(
-        Path()
-          ..moveTo(markerX, _barBottom)
-          ..lineTo(
-            markerX - _deviceBeatMarker / 2,
-            _barBottom + _deviceBeatMarker,
-          )
-          ..lineTo(
-            markerX + _deviceBeatMarker / 2,
-            _barBottom + _deviceBeatMarker,
-          )
-          ..close(),
-        deviceBeatPaint,
       );
     }
 

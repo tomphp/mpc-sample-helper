@@ -7,19 +7,19 @@ An app of small reference Tools for users of the Akai MPC Sample. Its first Tool
 ### Musical time
 
 **Bar**:
-One measure of the chosen Time Signature. It always occupies one full Device Bar, however many Beats it has.
-_Avoid_: Measure, (graphical) bar
+One measure of the chosen Time Signature: its number of Beats times the Ticks in one Beat (e.g. 2880 Ticks in 3/4, 3360 in 7/8).
+_Avoid_: Measure, (graphical) bar, Device Bar
 
 **Time Signature**:
-The number of Beats in a Bar and the note value of each Beat (e.g. 3/4, 7/8). It is emulated: the device itself only supports 4/4.
+The number of Beats in a Bar and the note value of each Beat (e.g. 3/4, 7/8). Set per Project on the device, so every sequence shares it. The device offers 2/4, 3/4, 4/4, 5/4, 6/4, 7/4, 6/8, 7/8, 9/8, 10/8, 11/8 and 12/8.
 _Avoid_: Meter
 
 **Beat**:
-One of the evenly spaced divisions of a Bar defined by the Time Signature (e.g. 3 Beats in 3/4).
-_Avoid_: Count, pulse
+One of the evenly spaced divisions of a Bar defined by the Time Signature (e.g. 3 Beats in 3/4): a quarter note (960 Ticks) in x/4, an eighth note (480 Ticks) in x/8. In compound Time Signatures such as 6/8 every Beat counts the same; there's no grouping.
+_Avoid_: Count, pulse, Device Beat
 
 **Quantize**:
-The note value (e.g. 1/16, 1/8T), relative to the Time Signature, that divides a Bar into evenly spaced Grid Lines. Labelled `Q` on the device.
+The note value (e.g. 1/16, 1/8T) that divides a Bar into evenly spaced Grid Lines. It's independent of the Time Signature: 1/16 is always 240 Ticks. Labelled `Q` on the device.
 _Avoid_: Time division, grid size, Time Correct
 
 **Grid Line**:
@@ -27,30 +27,22 @@ One position produced by the Quantize within the Bar.
 _Avoid_: Division, grid marker
 
 **Step**:
-The distance in Ticks between two adjacent Grid Lines (e.g. 240 for 1/16 in 4/4).
+The distance in Ticks between two adjacent Grid Lines (e.g. 240 for 1/16).
 _Avoid_: Grid size, interval, spacing
 
 ### Device
 
-**Device Bar**:
-The MPC Sample's bar: always 4/4, made of four Device Beats.
-_Avoid_: Sequence bar
-
-**Device Beat**:
-One quarter note of the Device Bar, 960 Ticks long.
-_Avoid_: Quarter, beat (when the Time Signature's Beat is meant)
+**Project**:
+The device's top-level unit of work; its sequences all share one Time Signature.
+_Avoid_: Song, session
 
 **Tick**:
-The smallest unit of time on the device; there are 960 per Device Beat.
+The smallest unit of time on the device; there are 960 per quarter note.
 _Avoid_: Pulse, clock, PPQN
 
 **Position**:
-Where something falls in the Device Bar, written as Device Beat and Tick (e.g. `2:320`), the way Step Edit displays it.
+Where something falls in the Bar, written as Beat and Tick (e.g. `2:320`; in 6/8, `6:240`), the way Step Edit displays it. Every Position is a whole number of Ticks.
 _Avoid_: Tick value, offset, time
-
-**Inexact Position**:
-A Position whose Tick is not a whole number; shown rounded to one decimal place and highlighted, because the device cannot hit it exactly.
-_Avoid_: Fractional tick, approximate position
 
 **Step Edit**:
 The MPC Sample mode where a user edits an event's Position.
@@ -75,6 +67,10 @@ _Avoid_: Hidden function, key combo, hotkey
 **Gesture**:
 The ordered actions on Controls that trigger a Shortcut (e.g. hold ERASE, press a pad), optionally under a condition such as "while stopped".
 _Avoid_: Combo, chord, key sequence
+
+**Tip**:
+A workflow that combines features of the device over several steps to achieve something more advanced than any one of them does alone (e.g. resampling a live performance and capturing it with RECALL). A single Gesture with a single effect is a Shortcut, not a Tip.
+_Avoid_: Trick, hack, recipe
 
 ### App
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../model/model.dart';
 import 'grid_line_table.dart';
-import 'standard_steps_table.dart';
+import 'steps_table.dart';
 import 'timeline.dart';
 
 class StepEditTool extends StatefulWidget {
@@ -25,39 +25,13 @@ class _StepEditToolState extends State<StepEditTool> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Time Signature', style: Theme.of(context).textTheme.titleSmall),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              _Dropdown<int>(
-                label: 'Beats',
-                values: TimeSignature.beatChoices,
-                selected: _timeSignature.beats,
-                labelOf: (beats) => '$beats',
-                onSelected: (beats) => setState(
-                  () => _timeSignature = TimeSignature(
-                    beats,
-                    _timeSignature.noteValue,
-                  ),
-                ),
-              ),
-              const Text('/'),
-              _Dropdown<int>(
-                label: 'Note value',
-                values: TimeSignature.noteValueChoices,
-                selected: _timeSignature.noteValue,
-                labelOf: (noteValue) => '$noteValue',
-                onSelected: (noteValue) => setState(
-                  () => _timeSignature = TimeSignature(
-                    _timeSignature.beats,
-                    noteValue,
-                  ),
-                ),
-              ),
-            ],
+          _Dropdown<TimeSignature>(
+            label: 'Time Signature',
+            values: TimeSignature.values,
+            selected: _timeSignature,
+            labelOf: (timeSignature) => '$timeSignature',
+            onSelected: (timeSignature) =>
+                setState(() => _timeSignature = timeSignature),
           ),
           const SizedBox(height: 16),
           _Dropdown<Quantize>(
@@ -83,10 +57,7 @@ class _StepEditToolState extends State<StepEditTool> {
             gridLines: layout.gridLines,
           ),
           const SizedBox(height: 24),
-          StandardStepsTable(
-            key: const Key('standard-steps'),
-            current: _quantize,
-          ),
+          StepsTable(key: const Key('steps'), current: _quantize),
         ],
       ),
     );

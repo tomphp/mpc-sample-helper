@@ -1,10 +1,6 @@
-import 'fraction.dart';
 import 'position.dart';
 import 'quantize.dart';
 import 'time_signature.dart';
-
-/// Ticks in one Device Bar: four Device Beats.
-const ticksPerBar = 4 * ticksPerDeviceBeat;
 
 /// One position produced by the Quantize within the Bar.
 class GridLine {
@@ -39,33 +35,25 @@ class Beat {
 
 /// Everything STEP EDIT draws for one Bar.
 class BarLayout {
-  const BarLayout({
-    required this.gridLines,
-    required this.beats,
-    required this.deviceBeats,
-  });
+  const BarLayout({required this.gridLines, required this.beats});
 
   final List<GridLine> gridLines;
   final List<Beat> beats;
-
-  /// Where each of the four Device Beats starts, as a fraction of the Bar.
-  final List<double> deviceBeats;
 }
 
 BarLayout layoutBar(TimeSignature timeSignature, Quantize quantize) {
-  final bar = Fraction(ticksPerBar);
-  final beatLength = Fraction(ticksPerBar, timeSignature.beats);
-  final step = _step(timeSignature, quantize);
+  final bar = timeSignature.ticksPerBar;
+  final beatLength = timeSignature.ticksPerBeat;
 
   final gridLines = <GridLine>[];
-  for (var ticks = Fraction(0); ticks < bar; ticks = ticks + step) {
-    final beats = ticks / beatLength;
+  for (var ticks = 0; ticks < bar; ticks += quantize.step) {
+    final position = Position.fromTicks(ticks, ticksPerBeat: beatLength);
     gridLines.add(
       GridLine(
         number: gridLines.length + 1,
-        barFraction: (ticks / bar).toDouble(),
-        position: Position.fromTicks(ticks),
-        beat: beats.isWhole ? beats.numerator + 1 : null,
+        barFraction: ticks / bar,
+        position: position,
+        beat: position.tick == 0 ? position.beat : null,
       ),
     );
   }
@@ -76,24 +64,5 @@ BarLayout layoutBar(TimeSignature timeSignature, Quantize quantize) {
       for (var i = 0; i < timeSignature.beats; i++)
         Beat(number: i + 1, barFraction: i / timeSignature.beats),
     ],
-    deviceBeats: const [0, 0.25, 0.5, 0.75],
   );
-}
-
-/// The Step in Ticks for every Quantize value in 4/4, the device's native
-/// Time Signature. Every one is a whole number of Ticks.
-Map<Quantize, int> standardStepsIn44() => {
-  for (final quantize in Quantize.values)
-    quantize: _step(TimeSignature.standard, quantize).numerator,
-};
-
-/// Ticks between adjacent Grid Lines: the Bar is the Time Signature's
-/// beats/noteValue of a whole note, and the Quantize is 1/n of a whole note.
-Fraction _step(TimeSignature timeSignature, Quantize quantize) {
-  final wholeNote = Fraction(
-    ticksPerBar * timeSignature.noteValue,
-    timeSignature.beats,
-  );
-  final step = wholeNote / Fraction(quantize.noteValue);
-  return quantize.triplet ? step * Fraction(2, 3) : step;
 }

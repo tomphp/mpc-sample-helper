@@ -12,8 +12,8 @@ Finder gridLineTableText(String text) => find.descendant(
   matching: find.text(text),
 );
 
-Finder standardStepsText(String text) => find.descendant(
-  of: find.byKey(const Key('standard-steps')),
+Finder stepsText(String text) => find.descendant(
+  of: find.byKey(const Key('steps')),
   matching: find.text(text),
 );
 
@@ -43,21 +43,12 @@ Future<void> chooseQ(WidgetTester tester, String label) async {
   await tapMenuItem(tester, label);
 }
 
-Finder timeSignatureDropdown(String label) => find.byWidgetPredicate(
-  (widget) =>
-      widget is DropdownMenu<int> && (widget.label as Text?)?.data == label,
-);
+final timeSignatureDropdown = find.byType(DropdownMenu<TimeSignature>);
 
-Future<void> chooseTimeSignature(
-  WidgetTester tester,
-  int beats,
-  int noteValue,
-) async {
-  for (final (label, value) in [('Beats', beats), ('Note value', noteValue)]) {
-    await tester.tap(timeSignatureDropdown(label));
-    await tester.pumpAndSettle();
-    await tapMenuItem(tester, '$value');
-  }
+Future<void> chooseTimeSignature(WidgetTester tester, String label) async {
+  await tester.tap(timeSignatureDropdown);
+  await tester.pumpAndSettle();
+  await tapMenuItem(tester, label);
 }
 
 void main() {
@@ -113,13 +104,10 @@ void main() {
       isNot(DevicePalette.blue),
     );
     expect(
-      renderedColour(tester, find.text('Time Signature')),
+      renderedColour(tester, find.text('Time Signature').first),
       DevicePalette.amber,
     );
-    expect(
-      renderedColour(tester, find.text('Standard Steps in 4/4')),
-      DevicePalette.amber,
-    );
+    expect(renderedColour(tester, find.text('Steps')), DevicePalette.amber);
   });
 
   testWidgets('STEP EDIT starts at Q 1/16 and lists its Grid Lines', (
@@ -144,60 +132,49 @@ void main() {
     expect(gridLineTableText('4:000'), findsOneWidget);
   });
 
-  testWidgets('Standard Steps in 4/4 highlights the current Q', (tester) async {
+  testWidgets('Steps highlights the current Q', (tester) async {
     await tester.pumpWidget(const MpcSampleHelperApp());
     final highlight = highlightColour(tester);
 
-    expect(find.text('Standard Steps in 4/4'), findsOneWidget);
-    expect(textColour(tester, standardStepsText('240')), highlight);
-    expect(textColour(tester, standardStepsText('960')), isNot(highlight));
+    expect(find.text('Steps'), findsOneWidget);
+    expect(textColour(tester, stepsText('240')), highlight);
+    expect(textColour(tester, stepsText('960')), isNot(highlight));
 
     await chooseQ(tester, '1/4');
 
-    expect(textColour(tester, standardStepsText('960')), highlight);
-    expect(textColour(tester, standardStepsText('240')), isNot(highlight));
+    expect(textColour(tester, stepsText('960')), highlight);
+    expect(textColour(tester, stepsText('240')), isNot(highlight));
   });
 
-  testWidgets('Time Signature defaults to 4/4 and emulates 3/4', (
+  testWidgets('Time Signature offers the device\'s values, defaulting to 4/4', (
     tester,
   ) async {
     await tester.pumpWidget(const MpcSampleHelperApp());
 
-    expect(
-      tester
-          .widget<DropdownMenu<int>>(timeSignatureDropdown('Beats'))
-          .initialSelection,
-      4,
+    final dropdown = tester.widget<DropdownMenu<TimeSignature>>(
+      timeSignatureDropdown,
     );
+    expect((dropdown.label! as Text).data, 'Time Signature');
+    expect(dropdown.initialSelection, TimeSignature.fourFour);
     expect(
-      tester
-          .widget<DropdownMenu<int>>(timeSignatureDropdown('Note value'))
-          .initialSelection,
-      4,
+      [for (final entry in dropdown.dropdownMenuEntries) entry.label],
+      [
+        '2/4', '3/4', '4/4', '5/4', '6/4', '7/4', //
+        '6/8', '7/8', '9/8', '10/8', '11/8', '12/8',
+      ],
     );
-
-    await chooseTimeSignature(tester, 3, 4);
-    await chooseQ(tester, '1/4');
-
-    expect(gridLineTableText('1:000'), findsOneWidget);
-    expect(gridLineTableText('2:320'), findsOneWidget);
-    expect(gridLineTableText('3:640'), findsOneWidget);
-    expect(gridLineTableText('4:000'), findsNothing);
   });
 
-  testWidgets('Inexact rows are highlighted', (tester) async {
+  testWidgets('choosing 6/8 counts six eighth-note Beats', (tester) async {
     await tester.pumpWidget(const MpcSampleHelperApp());
-    final highlight = highlightColour(tester);
 
-    await chooseTimeSignature(tester, 3, 4);
-    await chooseQ(tester, '1/8T');
+    await chooseTimeSignature(tester, '6/8');
 
-    expect(textColour(tester, gridLineTableText('1:426.7')), highlight);
-    expect(textColour(tester, gridLineTableText('2:320')), isNot(highlight));
-
-    // Grid Line 5 (2:746.7) is Inexact; Grid Line 4 (2:320) is not.
-    expect(textColour(tester, gridLineTableText('5')), highlight);
-    expect(textColour(tester, gridLineTableText('4')), isNot(highlight));
+    expect(gridLineTableText('1:240'), findsOneWidget);
+    expect(gridLineTableText('2:000'), findsOneWidget);
+    expect(gridLineTableText('6:240'), findsOneWidget);
+    expect(gridLineTableText('1:480'), findsNothing);
+    expect(gridLineTableText('7:000'), findsNothing);
   });
 
   testWidgets('the zoom button switches the Timeline between views', (

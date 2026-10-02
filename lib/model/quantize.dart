@@ -1,3 +1,5 @@
+import 'time_signature.dart';
+
 /// The note value that divides a Bar into evenly spaced Grid Lines.
 /// Labelled `Q` on the device.
 enum Quantize {
@@ -18,4 +20,10 @@ enum Quantize {
   final bool triplet;
 
   String get label => '1/$noteValue${triplet ? 'T' : ''}';
+
+  /// Ticks between adjacent Grid Lines, whatever the Time Signature.
+  int get step {
+    final ticks = ticksPerQuarterNote * 4 ~/ noteValue;
+    return triplet ? ticks * 2 ~/ 3 : ticks;
+  }
 }
