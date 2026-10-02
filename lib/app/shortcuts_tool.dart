@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../model/model.dart';
 import 'keycap.dart';
+import 'separated.dart';
 import 'theme.dart';
 
 /// Shortcuts grouped by Mode, read from the bundled Shortcut data file.
@@ -43,11 +44,7 @@ class _ShortcutsToolState extends State<ShortcutsTool> {
             ),
           for (final mode in snapshot.data ?? const <ShortcutMode>[]) ...[
             const SizedBox(height: 24),
-            Text(
-              mode.name,
-              style: Theme.of(context).textTheme.titleMedium!
-                  .copyWith(color: HelperColors.of(context).label),
-            ),
+            Text(mode.name, style: Theme.of(context).textTheme.titleMedium),
             for (final shortcut in mode.shortcuts)
               _ShortcutEntry(shortcut: shortcut),
           ],
@@ -69,7 +66,7 @@ class _ShortcutEntry extends StatelessWidget {
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: DevicePalette.surface,
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -79,16 +76,13 @@ class _ShortcutEntry extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             crossAxisAlignment: WrapCrossAlignment.end,
-            children: [
-              for (final (index, step) in shortcut.gesture.indexed) ...[
-                if (index > 0)
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 6),
-                    child: Text('+'),
-                  ),
-                Keycap(step: step),
-              ],
-            ],
+            children: separated(
+              [for (final step in shortcut.gesture) Keycap(step: step)],
+              const Padding(
+                padding: EdgeInsets.only(bottom: 6),
+                child: Text('+'),
+              ),
+            ),
           ),
           if (shortcut.condition case final condition?) ...[
             const SizedBox(height: 8),

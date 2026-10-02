@@ -6,8 +6,9 @@
 #              move, tap
 #     Controls: the label printed on the front panel (e.g. SAMPLE, PAD BANK,
 #               K1, B1, ENCODER, FADER), STOP, PLAY, MINUS or PLUS for the
-#               symbol buttons, "pad 1" to "pad 16", or "any pad"
-#   when:   optional condition, e.g. "while stopped"
+#               symbol buttons, "pad 1" to "pad 16", a range such as
+#               "pads 1–8", "any pad", or a choice such as "K1 / K2 / K3"
+#   condition: optional, e.g. "while stopped"
 #   effect: what it does
 modes:
   - mode: Any Mode
@@ -34,7 +35,7 @@ modes:
       - gesture:
           - hold: ERASE
           - hold: any pad
-        when: during playback
+        condition: during playback
         effect: Erase that pad's events as they play
       - gesture:
           - hold: ERASE
@@ -60,7 +61,7 @@ modes:
       - gesture:
           - hold: ERASE
           - press: any pad
-        when: while stopped
+        condition: while stopped
         effect: Delete the pad's sample
       - gesture:
           - press: ENCODER
@@ -92,7 +93,7 @@ modes:
         effect: Time signature
       - gesture:
           - press: SEQ RECORD
-        when: while recording
+        condition: while recording
         effect: Stop recording but keep playing
 
   - mode: Step Edit
@@ -116,7 +117,7 @@ modes:
     shortcuts:
       - gesture:
           - tap: any pad
-        when: while recording
+        condition: while recording
         effect: Chop on the fly; press the pad again to stop
 
   - mode: Knob FX and Compressor

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mpc_sample_helper/app/mpc_sample_helper_app.dart';
 import 'package:mpc_sample_helper/app/step_edit_tool.dart';
@@ -21,6 +22,10 @@ Color? highlightColour(WidgetTester tester) =>
 
 Color? textColour(WidgetTester tester, Finder finder) =>
     tester.widget<Text>(finder).style?.color;
+
+/// The colour the text is actually drawn in, after theme defaults.
+Color? renderedColour(WidgetTester tester, Finder finder) =>
+    tester.renderObject<RenderParagraph>(finder).text.style?.color;
 
 Future<void> tapMenuItem(WidgetTester tester, String label) async {
   final item = find.widgetWithText(MenuItemButton, label).last;
@@ -86,6 +91,36 @@ void main() {
       expect(theme.textTheme.bodyMedium!.fontFamily, 'RobotoMono');
     },
   );
+
+  testWidgets('the selected tab is blue and field labels are amber', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MpcSampleHelperApp());
+    final bar = find.byType(NavigationBar);
+
+    expect(
+      renderedColour(
+        tester,
+        find.descendant(of: bar, matching: find.text('STEP EDIT')),
+      ),
+      DevicePalette.blue,
+    );
+    expect(
+      renderedColour(
+        tester,
+        find.descendant(of: bar, matching: find.text('Shortcuts')),
+      ),
+      isNot(DevicePalette.blue),
+    );
+    expect(
+      renderedColour(tester, find.text('Time Signature')),
+      DevicePalette.amber,
+    );
+    expect(
+      renderedColour(tester, find.text('Standard Steps in 4/4')),
+      DevicePalette.amber,
+    );
+  });
 
   testWidgets('STEP EDIT starts at Q 1/16 and lists its Grid Lines', (
     tester,

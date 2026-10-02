@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../model/model.dart';
-import 'theme.dart';
+import 'separated.dart';
 
 /// Front-panel colours from the User Guide's hardware drawing.
 abstract final class _Panel {
@@ -12,7 +12,6 @@ abstract final class _Panel {
   static const orangeButton = Color(0xFFFF5001);
   static const redStripe = Color(0xFFCD1433);
   static const greenStripe = Color(0xFF64BB46);
-  static const pad = Color(0xFF85898A);
   static const padWell = Color(0xFF22314E);
   static const knob = Color(0xFF3A3D44);
   static const functionButton = Color(0xFF2C2C34);
@@ -30,11 +29,7 @@ class Keycap extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          step.action.word,
-          style: Theme.of(context).textTheme.labelSmall!
-              .copyWith(color: HelperColors.of(context).label),
-        ),
+        Text(step.action.word, style: Theme.of(context).textTheme.labelSmall),
         const SizedBox(height: 4),
         _ControlDrawing(step.control),
       ],
@@ -51,32 +46,43 @@ class _ControlDrawing extends StatelessWidget {
   Widget build(BuildContext context) => switch (control) {
     SingleControl(:final control) => switch (control.kind) {
       ControlKind.button => _Button(control),
-      ControlKind.knob => _Knob(control.label),
-      ControlKind.encoder => _Knob(control.label, encoder: true),
+      ControlKind.knob || ControlKind.encoder => _Knob(control),
       ControlKind.fader => _Fader(control.label),
       ControlKind.functionButton => _FunctionButton(control.label),
       ControlKind.pad => _Pad(label: control.label),
     },
     Pad(:final number) => _Pad(label: '$number'),
     AnyPad() => const _Pad(label: 'any'),
-    PadRange(:final first, :final last) => _Pad(label: '$first–$last'),
+    PadRange(:final first, :final last) => Row(
+      mainAxisSize: MainAxisSize.min,
+      children: separated([
+        _Pad(label: '$first'),
+        _Pad(label: '$last'),
+      ], const _Separator('–')),
+    ),
     ControlChoice(:final options) => Row(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        for (final (index, option) in options.indexed) ...[
-          if (index > 0)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4),
-              child: Text('/'),
-            ),
-          _ControlDrawing(option),
-        ],
-      ],
+      children: separated([
+        for (final option in options) _ControlDrawing(option),
+      ], const _Separator('/')),
     ),
   };
 }
 
-const _labelStyle = TextStyle(
+class _Separator extends StatelessWidget {
+  const _Separator(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 4),
+    child: Text(text),
+  );
+}
+
+/// The white text printed on Controls.
+const _printedLabelStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.bold,
   fontSize: 12,
@@ -114,7 +120,7 @@ class _Button extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(control.label, style: _labelStyle),
+          Text(control.label, style: _printedLabelStyle),
           if (stripe != null) ...[
             const SizedBox(height: 3),
             Container(width: 28, height: 4, color: stripe),
@@ -145,12 +151,14 @@ class _Pad extends StatelessWidget {
         alignment: Alignment.bottomLeft,
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          color: _Panel.pad,
+          color: _Panel.greyButton,
           borderRadius: BorderRadius.circular(3),
         ),
         child: Text(
           label,
-          style: _labelStyle.copyWith(fontSize: label.length > 2 ? 9 : 11),
+          style: _printedLabelStyle.copyWith(
+            fontSize: label.length > 2 ? 9 : 11,
+          ),
         ),
       ),
     );
@@ -159,13 +167,13 @@ class _Pad extends StatelessWidget {
 
 /// K1–K3 as small knobs, the ENCODER as a larger knurled one.
 class _Knob extends StatelessWidget {
-  const _Knob(this.label, {this.encoder = false});
+  const _Knob(this.control);
 
-  final String label;
-  final bool encoder;
+  final Control control;
 
   @override
   Widget build(BuildContext context) {
+    final encoder = control.kind == ControlKind.encoder;
     final size = encoder ? 30.0 : 24.0;
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -175,7 +183,7 @@ class _Knob extends StatelessWidget {
           painter: _KnobPainter(encoder: encoder),
         ),
         const SizedBox(width: 6),
-        Text(label, style: _labelStyle),
+        Text(control.label, style: _printedLabelStyle),
       ],
     );
   }
@@ -253,7 +261,7 @@ class _Fader extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        Text(label, style: _labelStyle),
+        Text(label, style: _printedLabelStyle),
       ],
     );
   }
@@ -274,7 +282,7 @@ class _FunctionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: _Panel.greyButton),
       ),
-      child: Text(label, style: _labelStyle),
+      child: Text(label, style: _printedLabelStyle),
     );
   }
 }

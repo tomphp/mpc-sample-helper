@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 /// Colours taken from the MPC Sample's screen.
 abstract final class DevicePalette {
   static const black = Color(0xFF000000);
+  static const nearBlack = Color(0xFF14141A);
+  static const darkSurface = Color(0xFF1C1C22);
   static const surface = Color(0xFF282830);
   static const white = Color(0xFFFFFFFF);
+  static const mutedWhite = Color(0xFFB4B4BE);
   static const amber = Color(0xFFF8B800);
   static const crimson = Color(0xFFD81048);
   static const blue = Color(0xFF2F9BFF);
@@ -16,13 +19,10 @@ abstract final class DevicePalette {
 /// App colours beyond the Material scheme.
 @immutable
 class HelperColors extends ThemeExtension<HelperColors> {
-  const HelperColors({required this.highlight, required this.label});
+  const HelperColors({required this.highlight});
 
   /// Marks Inexact Positions and the current Q.
   final Color highlight;
-
-  /// Field labels and headings.
-  final Color label;
 
   static HelperColors of(BuildContext context) =>
       Theme.of(context).extension<HelperColors>()!;
@@ -32,21 +32,19 @@ class HelperColors extends ThemeExtension<HelperColors> {
       TextStyle(color: highlight, fontWeight: FontWeight.bold);
 
   @override
-  HelperColors copyWith({Color? highlight, Color? label}) => HelperColors(
-    highlight: highlight ?? this.highlight,
-    label: label ?? this.label,
-  );
+  HelperColors copyWith({Color? highlight}) =>
+      HelperColors(highlight: highlight ?? this.highlight);
 
   @override
   HelperColors lerp(HelperColors? other, double t) => other == null
       ? this
-      : HelperColors(
-          highlight: Color.lerp(highlight, other.highlight, t)!,
-          label: Color.lerp(label, other.label, t)!,
-        );
+      : HelperColors(highlight: Color.lerp(highlight, other.highlight, t)!);
 }
 
 /// The app's only theme: always dark, like the device's screen.
+///
+/// Headings and field labels (the title and label text styles) are amber,
+/// so widgets get the colour by using those styles.
 ThemeData buildTheme() {
   const scheme = ColorScheme.dark(
     primary: DevicePalette.blue,
@@ -56,22 +54,35 @@ ThemeData buildTheme() {
     error: DevicePalette.crimson,
     surface: DevicePalette.black,
     onSurface: DevicePalette.white,
-    onSurfaceVariant: Color(0xFFB4B4BE),
+    onSurfaceVariant: DevicePalette.mutedWhite,
     surfaceContainerLowest: DevicePalette.black,
-    surfaceContainerLow: Color(0xFF14141A),
-    surfaceContainer: Color(0xFF1C1C22),
+    surfaceContainerLow: DevicePalette.nearBlack,
+    surfaceContainer: DevicePalette.darkSurface,
     surfaceContainerHigh: DevicePalette.surface,
     surfaceContainerHighest: DevicePalette.surface,
     outline: DevicePalette.grey,
     outlineVariant: DevicePalette.dimGrey,
   );
-  const labelStyle = TextStyle(color: DevicePalette.amber);
+  const fieldLabel = InputDecorationTheme(
+    labelStyle: TextStyle(color: DevicePalette.amber),
+    floatingLabelStyle: TextStyle(color: DevicePalette.amber),
+  );
 
-  return ThemeData(
-    colorScheme: scheme,
-    fontFamily: 'RobotoMono',
+  final base = ThemeData(colorScheme: scheme, fontFamily: 'RobotoMono');
+  return base.copyWith(
     scaffoldBackgroundColor: DevicePalette.black,
     dividerColor: DevicePalette.dimGrey,
+    textTheme: base.textTheme.copyWith(
+      titleMedium: base.textTheme.titleMedium!.copyWith(
+        color: DevicePalette.amber,
+      ),
+      titleSmall: base.textTheme.titleSmall!.copyWith(
+        color: DevicePalette.amber,
+      ),
+      labelSmall: base.textTheme.labelSmall!.copyWith(
+        color: DevicePalette.amber,
+      ),
+    ),
     appBarTheme: const AppBarTheme(
       backgroundColor: DevicePalette.black,
       foregroundColor: DevicePalette.white,
@@ -86,22 +97,18 @@ ThemeData buildTheme() {
               : DevicePalette.white,
         ),
       ),
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => base.textTheme.labelMedium!.copyWith(
+          color: states.contains(WidgetState.selected)
+              ? DevicePalette.blue
+              : DevicePalette.white,
+        ),
+      ),
     ),
-    inputDecorationTheme: const InputDecorationTheme(
-      labelStyle: labelStyle,
-      floatingLabelStyle: labelStyle,
-    ),
+    inputDecorationTheme: fieldLabel,
     dropdownMenuTheme: const DropdownMenuThemeData(
-      inputDecorationTheme: InputDecorationTheme(
-        labelStyle: labelStyle,
-        floatingLabelStyle: labelStyle,
-      ),
+      inputDecorationTheme: fieldLabel,
     ),
-    extensions: const [
-      HelperColors(
-        highlight: DevicePalette.crimson,
-        label: DevicePalette.amber,
-      ),
-    ],
+    extensions: const [HelperColors(highlight: DevicePalette.crimson)],
   );
 }

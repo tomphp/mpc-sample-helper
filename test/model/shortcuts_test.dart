@@ -41,7 +41,7 @@ modes:
       - gesture:
           - hold: ERASE
           - press: any pad
-        when: while stopped
+        condition: while stopped
         effect: Delete the pad's sample
 ''');
 
@@ -229,6 +229,36 @@ modes:
       - gesture: [turn: K1 / K4]
         effect: Nothing
 ''', 'Mode "Any Mode", Shortcut 1: unknown Control "K4"');
+    });
+
+    test('an unknown key in a Shortcut', () {
+      expectError('''
+modes:
+  - mode: Any Mode
+    shortcuts:
+      - gesture: [press: STOP]
+        whne: while stopped
+        effect: Stop
+''', 'Mode "Any Mode", Shortcut 1: unknown key "whne"');
+    });
+
+    test('a condition that is not text', () {
+      expectError('''
+modes:
+  - mode: Any Mode
+    shortcuts:
+      - gesture: [press: STOP]
+        condition: [while stopped]
+        effect: Stop
+''', 'Mode "Any Mode", Shortcut 1: condition must be text');
+    });
+
+    test('an unknown key in a Mode', () {
+      expectError('''
+modes:
+  - mode: Any Mode
+    shortcut: []
+''', 'Mode "Any Mode": unknown key "shortcut"');
     });
   });
 }

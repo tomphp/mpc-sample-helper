@@ -66,12 +66,8 @@ enum Control {
   /// or a word for those printed as symbols.
   String get reference => symbolName ?? label;
 
-  static Control? byReference(String reference) {
-    for (final control in values) {
-      if (control.reference == reference) return control;
-    }
-    return null;
-  }
+  static Control? byReference(String reference) =>
+      values.where((control) => control.reference == reference).firstOrNull;
 }
 
 /// Which Control (or pad) a Gesture step acts on.

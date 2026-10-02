@@ -18,12 +18,8 @@ enum GestureAction {
   /// How the Shortcut data file and the app write this action.
   final String word;
 
-  static GestureAction? byWord(String word) {
-    for (final action in values) {
-      if (action.word == word) return action;
-    }
-    return null;
-  }
+  static GestureAction? byWord(String word) =>
+      values.where((action) => action.word == word).firstOrNull;
 }
 
 /// One action on one Control.
@@ -80,10 +76,11 @@ List<ShortcutMode> parseShortcuts(String yaml) {
 
 ShortcutMode _parseMode(int number, Object? mode) {
   final name = mode is YamlMap ? mode['mode'] : null;
-  if (name is! String || name.trim().isEmpty) {
+  if (mode is! YamlMap || name is! String || name.trim().isEmpty) {
     throw ShortcutDataException('Mode $number has no name');
   }
-  final shortcuts = mode is YamlMap ? mode['shortcuts'] : null;
+  _checkKeys('Mode "$name"', mode, const {'mode', 'shortcuts'});
+  final shortcuts = mode['shortcuts'];
   if (shortcuts is! YamlList) {
     throw ShortcutDataException('Mode "$name" has no "shortcuts" list');
   }
@@ -97,6 +94,7 @@ Shortcut _parseShortcut(String where, Object? shortcut) {
   if (shortcut is! YamlMap) {
     throw ShortcutDataException('$where: expected gesture and effect');
   }
+  _checkKeys(where, shortcut, const {'gesture', 'condition', 'effect'});
   final effect = shortcut['effect'];
   if (effect is! String || effect.trim().isEmpty) {
     throw ShortcutDataException('$where: missing effect');
@@ -105,12 +103,24 @@ Shortcut _parseShortcut(String where, Object? shortcut) {
   if (steps is! YamlList || steps.isEmpty) {
     throw ShortcutDataException('$where: empty gesture');
   }
-  final condition = shortcut['when'];
+  final condition = shortcut['condition'];
+  if (condition != null && condition is! String) {
+    throw ShortcutDataException('$where: condition must be text');
+  }
   return Shortcut(
     gesture: [for (final step in steps) _parseStep(where, step)],
-    condition: condition is String ? condition : null,
+    condition: condition as String?,
     effect: effect,
   );
+}
+
+/// Rejects misspelt keys, which would otherwise be silently ignored.
+void _checkKeys(String where, YamlMap map, Set<String> allowed) {
+  for (final key in map.keys) {
+    if (!allowed.contains(key)) {
+      throw ShortcutDataException('$where: unknown key "$key"');
+    }
+  }
 }
 
 GestureStep _parseStep(String where, Object? step) {

@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mpc_sample_helper/app/mpc_sample_helper_app.dart';
+import 'package:mpc_sample_helper/app/theme.dart';
 
 /// Serves [shortcuts] as the Shortcut data file.
 class _ShortcutBundle extends CachingAssetBundle {
@@ -30,7 +32,7 @@ modes:
       - gesture:
           - hold: SAMPLE
           - press: any pad
-        when: while stopped
+        condition: while stopped
         effect: Select the pad without playing it
 ''';
 
@@ -63,6 +65,14 @@ void main() {
     final selectPad = tester
         .getTopLeft(find.text('Select the pad without playing it'))
         .dy;
+    expect(
+      tester
+          .renderObject<RenderParagraph>(find.text('Any Mode'))
+          .text
+          .style
+          ?.color,
+      DevicePalette.amber,
+    );
     expect(anyMode, lessThan(stopAll));
     expect(stopAll, lessThan(sampleMode));
     expect(sampleMode, lessThan(selectPad));
