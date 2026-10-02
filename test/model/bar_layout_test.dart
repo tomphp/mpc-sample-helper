@@ -92,4 +92,69 @@ void main() {
     );
     expect(layout.deviceBeats, [0, 0.25, 0.5, 0.75]);
   });
+
+  group('emulated Time Signatures', () {
+    test('3/4 at 1/4 puts its Beats at 1:000, 2:320 and 3:640', () {
+      final layout = layoutBar(const TimeSignature(3, 4), Quantize.quarter);
+
+      expect(positions(layout), ['1:000', '2:320', '3:640']);
+      expect([for (final line in layout.gridLines) line.beat], [1, 2, 3]);
+      expect(
+        [for (final beat in layout.beats) beat.barFraction],
+        [0, 1 / 3, 2 / 3],
+      );
+    });
+
+    test('3/4 at 1/8T has Inexact Positions rounded to one decimal place', () {
+      final layout = layoutBar(
+        const TimeSignature(3, 4),
+        Quantize.eighthTriplet,
+      );
+      final lines = layout.gridLines;
+
+      expect(positions(layout).take(4), [
+        '1:000',
+        '1:426.7',
+        '1:853.3',
+        '2:320',
+      ]);
+      expect(
+        [for (final line in lines.take(4)) line.position.isInexact],
+        [false, true, true, false],
+      );
+    });
+
+    test('7/8 at 1/4 leaves a short final gap', () {
+      final layout = layoutBar(const TimeSignature(7, 8), Quantize.quarter);
+
+      expect(positions(layout), ['1:000', '2:137.1', '3:274.3', '4:411.4']);
+      expect([for (final line in layout.gridLines) line.beat], [1, 3, 5, 7]);
+      expect(layout.gridLines.last.barFraction, closeTo(6 / 7, 1e-9));
+    });
+
+    test('1/4 at 1/4 is a single Grid Line on Beat 1', () {
+      final layout = layoutBar(const TimeSignature(1, 4), Quantize.quarter);
+
+      expect(positions(layout), ['1:000']);
+      expect([for (final line in layout.gridLines) line.beat], [1]);
+      expect(layout.beats, hasLength(1));
+    });
+
+    test('5/8 at 1/8 spreads five exact Beats across the Device Bar', () {
+      final layout = layoutBar(const TimeSignature(5, 8), Quantize.eighth);
+
+      expect(positions(layout), ['1:000', '1:768', '2:576', '3:384', '4:192']);
+      expect([for (final line in layout.gridLines) line.beat], [1, 2, 3, 4, 5]);
+    });
+
+    test('16/8 at 1/16 has 32 Grid Lines, every other one on a Beat', () {
+      final layout = layoutBar(const TimeSignature(16, 8), Quantize.sixteenth);
+
+      expect(layout.gridLines, hasLength(32));
+      expect(layout.gridLines.last.position.toString(), '4:840');
+      expect(layout.gridLines[1].beat, isNull);
+      expect(layout.gridLines[30].beat, 16);
+      expect(layout.beats, hasLength(16));
+    });
+  });
 }

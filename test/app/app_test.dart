@@ -21,13 +21,37 @@ Color? highlightColour(WidgetTester tester) =>
 Color? textColour(WidgetTester tester, Finder finder) =>
     tester.widget<Text>(finder).style?.color;
 
+Future<void> tapMenuItem(WidgetTester tester, String label) async {
+  final item = find.widgetWithText(MenuItemButton, label).last;
+  await tester.ensureVisible(item);
+  await tester.pumpAndSettle();
+  await tester.tap(item);
+  await tester.pumpAndSettle();
+}
+
 final qDropdown = find.byType(DropdownMenu<Quantize>);
 
 Future<void> chooseQ(WidgetTester tester, String label) async {
   await tester.tap(qDropdown);
   await tester.pumpAndSettle();
-  await tester.tap(find.widgetWithText(MenuItemButton, label).last);
-  await tester.pumpAndSettle();
+  await tapMenuItem(tester, label);
+}
+
+Finder timeSignatureDropdown(String label) => find.byWidgetPredicate(
+  (widget) =>
+      widget is DropdownMenu<int> && (widget.label as Text?)?.data == label,
+);
+
+Future<void> chooseTimeSignature(
+  WidgetTester tester,
+  int beats,
+  int noteValue,
+) async {
+  for (final (label, value) in [('Beats', beats), ('Note value', noteValue)]) {
+    await tester.tap(timeSignatureDropdown(label));
+    await tester.pumpAndSettle();
+    await tapMenuItem(tester, '$value');
+  }
 }
 
 void main() {
@@ -82,6 +106,44 @@ void main() {
 
     expect(textColour(tester, standardStepsText('960')), highlight);
     expect(textColour(tester, standardStepsText('240')), isNot(highlight));
+  });
+
+  testWidgets('Time Signature defaults to 4/4 and emulates 3/4', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MpcSampleHelperApp());
+
+    expect(
+      tester
+          .widget<DropdownMenu<int>>(timeSignatureDropdown('Beats'))
+          .initialSelection,
+      4,
+    );
+    expect(
+      tester
+          .widget<DropdownMenu<int>>(timeSignatureDropdown('Note value'))
+          .initialSelection,
+      4,
+    );
+
+    await chooseTimeSignature(tester, 3, 4);
+    await chooseQ(tester, '1/4');
+
+    expect(gridLineTableText('1:000'), findsOneWidget);
+    expect(gridLineTableText('2:320'), findsOneWidget);
+    expect(gridLineTableText('3:640'), findsOneWidget);
+    expect(gridLineTableText('4:000'), findsNothing);
+  });
+
+  testWidgets('Inexact rows are highlighted', (tester) async {
+    await tester.pumpWidget(const MpcSampleHelperApp());
+    final highlight = highlightColour(tester);
+
+    await chooseTimeSignature(tester, 3, 4);
+    await chooseQ(tester, '1/8T');
+
+    expect(textColour(tester, gridLineTableText('1:426.7')), highlight);
+    expect(textColour(tester, gridLineTableText('2:320')), isNot(highlight));
   });
 
   testWidgets('Shortcuts shows its intro sentence', (tester) async {
