@@ -6,32 +6,52 @@ import 'theme.dart';
 /// One Bar drawn across the available width: numbered Beat lines along the
 /// top, a marker at every Grid Line, faint Device Beat markers along the
 /// bottom, and Grid Line Positions labelled wherever they fit.
+///
+/// Zoomed in, the Timeline is made wide enough to label every Grid Line and
+/// scrolls sideways.
 class Timeline extends StatelessWidget {
-  const Timeline({super.key, required this.layout});
+  const Timeline({super.key, required this.layout, this.zoomedIn = false});
 
   final BarLayout layout;
+  final bool zoomedIn;
 
   static const height = 132.0;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return SizedBox(
-      height: height,
-      width: double.infinity,
-      child: CustomPaint(
-        painter: _TimelinePainter(
-          layout: layout,
-          textStyle: Theme.of(context).textTheme.labelSmall!,
-          colours: _TimelineColours(
-            bar: scheme.surfaceContainerHighest,
-            beat: scheme.onSurface,
-            gridLine: scheme.outline,
-            deviceBeat: scheme.outline.withValues(alpha: 0.45),
-            label: scheme.onSurfaceVariant,
-            highlight: HelperColors.of(context).highlight,
+    final textStyle = Theme.of(context).textTheme.labelSmall!;
+    final timeline = CustomPaint(painter: _painter(context, textStyle));
+    if (!zoomedIn) {
+      return SizedBox(height: height, width: double.infinity, child: timeline);
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = _TimelinePainter.widthToLabelEvery(layout, textStyle);
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            height: height,
+            width: width > constraints.maxWidth ? width : constraints.maxWidth,
+            child: timeline,
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  _TimelinePainter _painter(BuildContext context, TextStyle textStyle) {
+    final scheme = Theme.of(context).colorScheme;
+    return _TimelinePainter(
+      layout: layout,
+      textStyle: textStyle,
+      colours: _TimelineColours(
+        bar: scheme.surfaceContainerHighest,
+        beat: scheme.onSurface,
+        gridLine: scheme.outline,
+        deviceBeat: scheme.outline.withValues(alpha: 0.45),
+        label: scheme.onSurfaceVariant,
+        highlight: HelperColors.of(context).highlight,
       ),
     );
   }
@@ -73,6 +93,16 @@ class _TimelinePainter extends CustomPainter {
   static const _deviceBeatMarker = 8.0;
   static const _labelTop = _barBottom + _deviceBeatMarker + 6;
   static const _labelGap = 8.0;
+
+  /// The Timeline width at which every Grid Line's label fits.
+  static double widthToLabelEvery(BarLayout layout, TextStyle textStyle) {
+    final bold = textStyle.copyWith(fontWeight: FontWeight.bold);
+    final widest = layout.gridLines.fold(0.0, (widest, line) {
+      final width = _layoutText('${line.position}', bold).width;
+      return width > widest ? width : widest;
+    });
+    return layout.gridLines.length * (widest + _labelGap) + 2 * _inset;
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -201,7 +231,7 @@ class _TimelinePainter extends CustomPainter {
     }
   }
 
-  TextPainter _layoutText(String text, TextStyle style) => TextPainter(
+  static TextPainter _layoutText(String text, TextStyle style) => TextPainter(
     text: TextSpan(text: text, style: style),
     textDirection: TextDirection.ltr,
   )..layout();

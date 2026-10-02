@@ -16,6 +16,7 @@ class _StepEditToolState extends State<StepEditTool> {
   int _beats = 4;
   int _noteValue = 4;
   Quantize _quantize = Quantize.sixteenth;
+  bool _zoomedIn = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +61,16 @@ class _StepEditToolState extends State<StepEditTool> {
               if (quantize != null) setState(() => _quantize = quantize);
             },
           ),
-          const SizedBox(height: 24),
-          Timeline(layout: layout),
+          const SizedBox(height: 16),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              tooltip: _zoomedIn ? 'Zoom out' : 'Zoom in',
+              icon: Icon(_zoomedIn ? Icons.zoom_out : Icons.zoom_in),
+              onPressed: () => setState(() => _zoomedIn = !_zoomedIn),
+            ),
+          ),
+          Timeline(layout: layout, zoomedIn: _zoomedIn),
           const SizedBox(height: 16),
           GridLineTable(
             key: const Key('grid-line-table'),

@@ -6,12 +6,12 @@
 
 **Status:** ready-for-agent
 
-- [ ] The Flutter project exists with the web target only (no iOS or Android targets) and runs in Chrome via `flutter run -d chrome`
-- [ ] The app title is "MPC Sample Helper"
-- [ ] The app launches with STEP EDIT selected
-- [ ] The bottom navigation bar shows `STEP EDIT` (uppercase) and `Shortcuts` (normal case)
-- [ ] Shortcuts shows exactly "A list of shortcuts that are not labelled on the front panel."
-- [ ] The theme defines a highlight colour
-- [ ] There is a `model` area with no Flutter imports, and an `app` area
-- [ ] An `app` widget test checks the launch tab, both navigation labels, and the Shortcuts sentence
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] The Flutter project exists with the web target only (no iOS or Android targets) and runs in Chrome via `flutter run -d chrome`
+- [x] The app title is "MPC Sample Helper"
+- [x] The app launches with STEP EDIT selected
+- [x] The bottom navigation bar shows `STEP EDIT` (uppercase) and `Shortcuts` (normal case)
+- [x] Shortcuts shows exactly "A list of shortcuts that are not labelled on the front panel."
+- [x] The theme defines a highlight colour
+- [x] There is a `model` area with no Flutter imports, and an `app` area
+- [x] An `app` widget test checks the launch tab, both navigation labels, and the Shortcuts sentence
+- [x] `flutter test` and `flutter analyze` pass

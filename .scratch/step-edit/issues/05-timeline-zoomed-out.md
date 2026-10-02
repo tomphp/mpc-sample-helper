@@ -6,12 +6,12 @@
 
 **Status:** ready-for-agent
 
-- [ ] The Timeline fills the available width and represents exactly one Bar
-- [ ] Every Beat has a line and its number label, at any Grid Line density
-- [ ] Every Grid Line has a marker
-- [ ] Faint Device Beat markers appear on the opposite edge from the Beat labels. In 4/4 they line up with the Beats; in 3/4 they don't
-- [ ] Grid Line Position labels never overlap. At 1/64 in 4/4 only some are labelled; at 1/4 in 4/4 all are
-- [ ] Inexact labels use the highlight colour
-- [ ] All positions come from `model`, with no tick arithmetic in the painter
-- [ ] Checked by eye in Chrome at 4/4 with 1/16, 3/4 with 1/8T, 7/8 with 1/4, and 4/4 with 1/64, at a phone-like width and at desktop width
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] The Timeline fills the available width and represents exactly one Bar
+- [x] Every Beat has a line and its number label, at any Grid Line density
+- [x] Every Grid Line has a marker
+- [x] Faint Device Beat markers appear on the opposite edge from the Beat labels. In 4/4 they line up with the Beats; in 3/4 they don't
+- [x] Grid Line Position labels never overlap. At 1/64 in 4/4 only some are labelled; at 1/4 in 4/4 all are
+- [x] Inexact labels use the highlight colour
+- [x] All positions come from `model`, with no tick arithmetic in the painter
+- [x] Checked by eye in Chrome at 4/4 with 1/16, 3/4 with 1/8T, 7/8 with 1/4, and 4/4 with 1/64, at a phone-like width and at desktop width
+- [x] `flutter test` and `flutter analyze` pass

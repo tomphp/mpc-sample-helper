@@ -6,10 +6,10 @@
 
 **Status:** ready-for-agent
 
-- [ ] A button switches between the zoomed-out and zoomed-in Timeline. Zoomed out is the default
-- [ ] Zoomed in, every Grid Line's Position is labelled without overlap, and the Timeline scrolls sideways
-- [ ] Beat lines, Beat labels, Device Beat markers and Inexact highlighting work the same in both views
-- [ ] The Grid Line table shows in both views
-- [ ] An `app` test checks that the button switches views and the table is still there
-- [ ] Checked by eye in Chrome at 4/4 with 1/64 and at 16/8 with 1/32T
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] A button switches between the zoomed-out and zoomed-in Timeline. Zoomed out is the default
+- [x] Zoomed in, every Grid Line's Position is labelled without overlap, and the Timeline scrolls sideways
+- [x] Beat lines, Beat labels, Device Beat markers and Inexact highlighting work the same in both views
+- [x] The Grid Line table shows in both views
+- [x] An `app` test checks that the button switches views and the table is still there
+- [x] Checked by eye in Chrome at 4/4 with 1/64 and at 16/8 with 1/32T
+- [x] `flutter test` and `flutter analyze` pass

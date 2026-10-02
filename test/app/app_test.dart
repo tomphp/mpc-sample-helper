@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mpc_sample_helper/app/mpc_sample_helper_app.dart';
 import 'package:mpc_sample_helper/app/step_edit_tool.dart';
 import 'package:mpc_sample_helper/app/theme.dart';
+import 'package:mpc_sample_helper/app/timeline.dart';
 import 'package:mpc_sample_helper/model/model.dart';
 
 Finder gridLineTableText(String text) => find.descendant(
@@ -144,6 +145,34 @@ void main() {
 
     expect(textColour(tester, gridLineTableText('1:426.7')), highlight);
     expect(textColour(tester, gridLineTableText('2:320')), isNot(highlight));
+  });
+
+  testWidgets('the zoom button switches the Timeline between views', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const MpcSampleHelperApp());
+    final horizontallyScrollingTimeline = find.descendant(
+      of: find.byType(Timeline),
+      matching: find.byWidgetPredicate(
+        (widget) =>
+            widget is Scrollable && widget.axisDirection == AxisDirection.right,
+      ),
+    );
+
+    expect(horizontallyScrollingTimeline, findsNothing);
+
+    await tester.tap(find.byTooltip('Zoom in'));
+    await tester.pumpAndSettle();
+
+    expect(horizontallyScrollingTimeline, findsOneWidget);
+    expect(find.byTooltip('Zoom out'), findsOneWidget);
+    expect(gridLineTableText('1:240'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Zoom out'));
+    await tester.pumpAndSettle();
+
+    expect(horizontallyScrollingTimeline, findsNothing);
+    expect(gridLineTableText('1:240'), findsOneWidget);
   });
 
   testWidgets('Shortcuts shows its intro sentence', (tester) async {

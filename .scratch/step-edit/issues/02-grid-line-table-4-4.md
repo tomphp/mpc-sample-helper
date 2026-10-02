@@ -6,11 +6,11 @@
 
 **Status:** ready-for-agent
 
-- [ ] The `Q` dropdown offers 1/4, 1/4T, 1/8, 1/8T, 1/16, 1/16T, 1/32, 1/32T and 1/64, all shown the same way, defaulting to 1/16
-- [ ] `model` takes a Time Signature and a Q value and returns the Grid Lines (number from 1, fraction of the Bar, Position, Beat number if on a Beat), the Beats and the four Device Beats
-- [ ] The Bar is 3840 Ticks and the Step is 3840 × note value ÷ (beats × n), times 2/3 for triplets
-- [ ] Positions are written `beat:tick`, Device Beat counted from 1, Tick padded to three digits (`1:000`, `1:080`)
-- [ ] The table has Grid Line number, Position and Beat columns
-- [ ] `model` unit tests, all in 4/4: 1/16 gives 16 Grid Lines `1:000` to `4:720`; 1/4T gives 6 Grid Lines ending at `4:320`; 1/4 gives Beat numbers 1–4; every Q value is exact
-- [ ] An `app` test checks the table starts `1:000`, `1:240` by default and updates when Q changes
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] The `Q` dropdown offers 1/4, 1/4T, 1/8, 1/8T, 1/16, 1/16T, 1/32, 1/32T and 1/64, all shown the same way, defaulting to 1/16
+- [x] `model` takes a Time Signature and a Q value and returns the Grid Lines (number from 1, fraction of the Bar, Position, Beat number if on a Beat), the Beats and the four Device Beats
+- [x] The Bar is 3840 Ticks and the Step is 3840 × note value ÷ (beats × n), times 2/3 for triplets
+- [x] Positions are written `beat:tick`, Device Beat counted from 1, Tick padded to three digits (`1:000`, `1:080`)
+- [x] The table has Grid Line number, Position and Beat columns
+- [x] `model` unit tests, all in 4/4: 1/16 gives 16 Grid Lines `1:000` to `4:720`; 1/4T gives 6 Grid Lines ending at `4:320`; 1/4 gives Beat numbers 1–4; every Q value is exact
+- [x] An `app` test checks the table starts `1:000`, `1:240` by default and updates when Q changes
+- [x] `flutter test` and `flutter analyze` pass
