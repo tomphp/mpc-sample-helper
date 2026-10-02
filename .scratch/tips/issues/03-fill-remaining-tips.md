@@ -6,9 +6,9 @@
 
 **Status:** ready-for-agent
 
-- [ ] All four Tips are in the data file in the order above, with titles, outcomes, steps and notes as agreed
-- [ ] Controls in the steps are marked so they render as keycaps; Shift Labels and screen names (RECALL, INPUT CONFIG, Time Correct, Do It!) stay plain text
-- [ ] Any wording that can't be expressed in the data format is raised with the user rather than changed silently
-- [ ] The test that the real data file parses still passes
-- [ ] Checked by eye in Chrome at phone and desktop widths
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] All four Tips are in the data file in the order above, with titles, outcomes, steps and notes as agreed
+- [x] Controls in the steps are marked so they render as keycaps; Shift Labels and screen names (RECALL, INPUT CONFIG, Time Correct, Do It!) stay plain text
+- [x] Any wording that can't be expressed in the data format is raised with the user rather than changed silently
+- [x] The test that the real data file parses still passes
+- [x] Checked by eye in Chrome at phone and desktop widths
+- [x] `flutter test` and `flutter analyze` pass

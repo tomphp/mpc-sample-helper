@@ -20,3 +20,22 @@ tips:
       - Hold [SHIFT] and press [SAMPLE] to open INPUT CONFIG, and set Source to Resample.
       - "Play live: hit pads, play sequences, use [PAD FX], [KNOB FX] or FLEX BEAT, turn [K1 / K2 / K3] or move the [FADER]."
       - Hold [SHIFT] and press [SAMPLE RECORD] to RECALL the last 25 seconds onto the next available pad.
+  - title: Move events further with the fader
+    outcome: Move an event across Steps in Step Edit
+    steps:
+      - In Step Edit, turn [ENCODER] to select the event.
+      - Move the [FADER] to nudge it. It only moves within the current Q's Step.
+      - To go further, turn [K2] to a coarser Q and nudge again.
+    note: "At 1/4 there's no coarser Q. Switch to 1/4T instead: its Grid Lines don't line up with the beats, so the event's Step overlaps the next beat. Alternate between straight and triplet values to leapfrog."
+  - title: Layer two pads with Pad Link
+    outcome: One pad also triggers another
+    steps:
+      - Press [SAMPLE], select the pad, and press [B2] until you reach the Play page.
+      - Hold [SHIFT] and turn [K2] to choose the pad that fires with it.
+    note: It only links within the same Pad Bank.
+  - title: Shift just one pad's timing
+    outcome: Push or pull one pad's events, e.g. a slightly late snare
+    steps:
+      - Hold [SHIFT] and press [pad 14] to open Time Correct, and select the pad(s).
+      - Turn [K2] (Shift) to move their events earlier or later.
+      - Press [B3] (Do It!) to apply.
