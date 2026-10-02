@@ -27,6 +27,29 @@ modes:
           - hold: TAP TEMPO
           - press and turn: ENCODER
         effect: Change the tempo's decimals
+      - gesture:
+          - hold: PAD BANK
+          - press: pads 1–8
+        effect: Jump straight to pad bank A–H
+      - gesture:
+          - hold: ERASE
+          - hold: any pad
+        when: during playback
+        effect: Erase that pad's events as they play
+      - gesture:
+          - hold: ERASE
+          - turn: K1 / K2 / K3
+        effect: Erase that knob's automation; B3 confirms, B1 cancels
+      - gesture:
+          - hold: ERASE
+          - move: FADER
+        effect: Erase the fader's automation; B3 confirms, B1 cancels
+      - gesture:
+          - hold: SHIFT
+          - hold: ERASE
+          - press: any pad
+          - release: ERASE
+        effect: Copy to the pads you pressed (press as many as you like)
 
   - mode: Sample Mode
     shortcuts:
@@ -34,3 +57,77 @@ modes:
           - hold: SAMPLE
           - press: any pad
         effect: Select the pad without playing it
+      - gesture:
+          - hold: ERASE
+          - press: any pad
+        when: while stopped
+        effect: Delete the pad's sample
+      - gesture:
+          - press: ENCODER
+        effect: Move between the K1–K3 parameters
+      - gesture:
+          - hold: SHIFT
+          - press: ENCODER
+        effect: Move between the K1–K3 parameters backwards
+
+  - mode: Sequence Mode
+    shortcuts:
+      - gesture:
+          - hold: SHIFT
+          - turn: ENCODER
+        effect: Move the playhead by the Q value instead of by beats
+      - gesture:
+          - hold: SEQ
+          - press: SAMPLE
+        effect: >-
+          Sample/Seq Mode: keep the sequence display while the pads play
+          samples (also works holding SAMPLE and pressing SEQ)
+      - gesture:
+          - hold: SHIFT
+          - turn: K1
+        effect: Sequence length, 1–128 bars
+      - gesture:
+          - hold: SHIFT
+          - turn: K2
+        effect: Time signature
+      - gesture:
+          - press: SEQ RECORD
+        when: while recording
+        effect: Stop recording but keep playing
+
+  - mode: Step Edit
+    shortcuts:
+      - gesture:
+          - hold: ERASE
+          - press: any pad
+        effect: Erase all of that pad's events
+      - gesture:
+          - move: FADER
+        effect: Nudge the selected event's timing
+
+  - mode: Chop Mode
+    shortcuts:
+      - gesture:
+          - hold: ERASE
+          - tap: any pad
+        effect: Remove that slice
+
+  - mode: Sample Record
+    shortcuts:
+      - gesture:
+          - tap: any pad
+        when: while recording
+        effect: Chop on the fly; press the pad again to stop
+
+  - mode: Knob FX and Compressor
+    shortcuts:
+      - gesture:
+          - hold: SHIFT
+          - turn: K1 / K2 / K3
+        effect: Extra effect parameters
+
+  - mode: Naming screens
+    shortcuts:
+      - gesture:
+          - hold: SHIFT
+        effect: Type capital letters

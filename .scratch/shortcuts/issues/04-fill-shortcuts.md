@@ -6,9 +6,9 @@
 
 **Status:** ready-for-agent
 
-- [ ] Every Shortcut kept in the candidates file is in the data file, with the same Mode, Gesture, condition and effect wording. Nothing deleted from the candidates file appears
-- [ ] No page numbers or flags appear in the app
-- [ ] The test that the real data file parses still passes
-- [ ] Any candidate whose Gesture can't be written in the data format is raised with the user rather than dropped silently
-- [ ] Checked by eye in Chrome: the full list at phone and desktop widths
-- [ ] `flutter test` and `flutter analyze` pass
+- [x] Every Shortcut kept in the candidates file is in the data file, with the same Mode, Gesture, condition and effect wording. Nothing deleted from the candidates file appears
+- [x] No page numbers or flags appear in the app
+- [x] The test that the real data file parses still passes
+- [x] Any candidate whose Gesture can't be written in the data format is raised with the user rather than dropped silently
+- [x] Checked by eye in Chrome: the full list at phone and desktop widths
+- [x] `flutter test` and `flutter analyze` pass
