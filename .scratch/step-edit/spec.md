@@ -96,7 +96,7 @@ A second Tool, **Shortcuts**, is a placeholder with one intro sentence, so the n
 - **Position display:**
   - Device Beat = whole-number part of (Tick ÷ 960) + 1, and Tick = the remainder.
   - Round the Tick to one decimal place, halves rounding up. If it rounds to 960.0, carry: Device Beat + 1 and Tick 0, still Inexact.
-  - Format `beat:tick`. Pad the whole part of the Tick to three digits (`1:000`, `1:080`, `1:426.7`). Show a decimal only when Inexact.
+  - Format `beat:tick`. Pad the whole part of the Tick to three digits (`1:000`, `1:080`, `1:426.7`). Show a decimal only when the rounded Tick isn't whole, so an Inexact Position that rounds to a whole Tick (e.g. 959.96 → `2:000`) shows none but is still highlighted.
   - A Position is Inexact when the exact Tick isn't a whole number, even if it rounds to one (e.g. 959.96 shows as `2:000`).
 - **Q options:** all nine values are offered and look identical, including 1/4, 1/4T and 1/64, which the device doesn't support. They're there so users can explore those grids.
 - **Settings state:** Time Signature and Q live in STEP EDIT's state with defaults 4/4 and 1/16. They aren't remembered between sessions.

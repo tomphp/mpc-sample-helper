@@ -84,7 +84,7 @@ BarLayout layoutBar(TimeSignature timeSignature, Quantize quantize) {
 /// Time Signature. Every one is a whole number of Ticks.
 Map<Quantize, int> standardStepsIn44() => {
   for (final quantize in Quantize.values)
-    quantize: _step(const TimeSignature(4, 4), quantize).numerator,
+    quantize: _step(TimeSignature.standard, quantize).numerator,
 };
 
 /// Ticks between adjacent Grid Lines: the Bar is the Time Signature's

@@ -80,7 +80,7 @@ void main() {
     );
   });
 
-  test('4/4 has four Beats and four Device Beats at the quarters', () {
+  test('4/4 has four Beats, each on a Device Beat', () {
     final layout = layoutBar(fourFour, Quantize.sixteenth);
 
     expect([for (final beat in layout.beats) beat.number], [1, 2, 3, 4]);

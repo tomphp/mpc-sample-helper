@@ -56,8 +56,20 @@ _Avoid_: Fractional tick, approximate position
 The MPC Sample mode where a user edits an event's Position.
 _Avoid_: Step editor, event editor, list editor
 
+**Mode**:
+The device state that decides what Controls do (e.g. Sample Mode, Sequence Mode, Step Edit, Chop Mode). Shortcuts are grouped by Mode.
+_Avoid_: Screen, page, view
+
+**Control**:
+A physical input on the MPC Sample: a button, pad, knob (K1–K3), the ENCODER, the fader, or a function button (B1–B3).
+_Avoid_: Key, input, hardware button
+
+**Shift Label**:
+The secondary function printed beneath a Control, reached by holding SHIFT (e.g. STEP EDIT under SEQ).
+_Avoid_: Secondary label, alt function
+
 **Shortcut**:
-A device action reached by a control combination that is not labelled on the front panel (e.g. SHIFT + Pad 14).
+A useful action reached by a gesture on one or more Controls whose effect is printed on the front panel neither as a Control's label nor as its Shift Label (e.g. pressing STOP twice to stop all audio).
 _Avoid_: Hidden function, key combo, hotkey
 
 ### App

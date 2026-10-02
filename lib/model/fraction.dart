@@ -19,7 +19,12 @@ class Fraction implements Comparable<Fraction> {
   bool get isWhole => denominator == 1;
 
   /// The largest whole number not greater than this.
-  int floor() => (numerator / denominator).floor();
+  int floor() {
+    final quotient = numerator ~/ denominator;
+    return numerator < 0 && quotient * denominator != numerator
+        ? quotient - 1
+        : quotient;
+  }
 
   Fraction operator +(Fraction other) => Fraction(
     numerator * other.denominator + other.numerator * denominator,

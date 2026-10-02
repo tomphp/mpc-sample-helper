@@ -11,6 +11,10 @@ class HelperColors extends ThemeExtension<HelperColors> {
   static HelperColors of(BuildContext context) =>
       Theme.of(context).extension<HelperColors>()!;
 
+  /// Text style for Inexact Positions and the current Q.
+  TextStyle get highlightStyle =>
+      TextStyle(color: highlight, fontWeight: FontWeight.bold);
+
   @override
   HelperColors copyWith({Color? highlight}) =>
       HelperColors(highlight: highlight ?? this.highlight);

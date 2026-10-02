@@ -145,6 +145,10 @@ void main() {
 
     expect(textColour(tester, gridLineTableText('1:426.7')), highlight);
     expect(textColour(tester, gridLineTableText('2:320')), isNot(highlight));
+
+    // Grid Line 5 (2:746.7) is Inexact; Grid Line 4 (2:320) is not.
+    expect(textColour(tester, gridLineTableText('5')), highlight);
+    expect(textColour(tester, gridLineTableText('4')), isNot(highlight));
   });
 
   testWidgets('the zoom button switches the Timeline between views', (

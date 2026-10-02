@@ -26,14 +26,12 @@ class Position {
   /// Counted from 1.
   final int deviceBeat;
 
+  /// The Tick within the Device Beat, in tenths, rounded half up.
   final int _tenths;
 
   /// True when the exact Tick is not a whole number, so the device can't
   /// hit it exactly.
   final bool isInexact;
-
-  /// The Tick within the Device Beat, rounded to one decimal place.
-  double get tick => _tenths / 10;
 
   /// `beat:tick`, with the Tick padded to three digits and a decimal shown
   /// only when the rounded Tick isn't whole (e.g. `1:080`, `1:426.7`).

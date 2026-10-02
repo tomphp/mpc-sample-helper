@@ -19,15 +19,15 @@ class Timeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.labelSmall!;
-    final timeline = CustomPaint(painter: _painter(context, textStyle));
+    final painter = _painter(context);
+    final timeline = CustomPaint(painter: painter);
     if (!zoomedIn) {
       return SizedBox(height: height, width: double.infinity, child: timeline);
     }
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final width = _TimelinePainter.widthToLabelEvery(layout, textStyle);
+        final width = painter.widthToLabelEveryGridLine();
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: SizedBox(
@@ -40,12 +40,13 @@ class Timeline extends StatelessWidget {
     );
   }
 
-  _TimelinePainter _painter(BuildContext context, TextStyle textStyle) {
+  _TimelinePainter _painter(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return _TimelinePainter(
       layout: layout,
-      textStyle: textStyle,
-      colours: _TimelineColours(
+      labelEveryGridLine: zoomedIn,
+      textStyle: Theme.of(context).textTheme.labelSmall!,
+      colours: (
         bar: scheme.surfaceContainerHighest,
         beat: scheme.onSurface,
         gridLine: scheme.outline,
@@ -57,34 +58,47 @@ class Timeline extends StatelessWidget {
   }
 }
 
-class _TimelineColours {
-  const _TimelineColours({
-    required this.bar,
-    required this.beat,
-    required this.gridLine,
-    required this.deviceBeat,
-    required this.label,
-    required this.highlight,
-  });
-
-  final Color bar;
-  final Color beat;
-  final Color gridLine;
-  final Color deviceBeat;
-  final Color label;
-  final Color highlight;
-}
+/// A record, so a theme change is a change for [CustomPainter.shouldRepaint].
+typedef _TimelineColours = ({
+  Color bar,
+  Color beat,
+  Color gridLine,
+  Color deviceBeat,
+  Color label,
+  Color highlight,
+});
 
 class _TimelinePainter extends CustomPainter {
   _TimelinePainter({
     required this.layout,
+    required this.labelEveryGridLine,
     required this.textStyle,
     required this.colours,
   });
 
   final BarLayout layout;
+
+  /// When false, Grid Line labels are thinned so they don't overlap.
+  final bool labelEveryGridLine;
+
   final TextStyle textStyle;
   final _TimelineColours colours;
+
+  late final List<TextPainter> _labels = [
+    for (final line in layout.gridLines)
+      _layoutText(
+        '${line.position}',
+        textStyle.copyWith(
+          color: line.position.isInexact ? colours.highlight : colours.label,
+          fontWeight: line.position.isInexact ? FontWeight.bold : null,
+        ),
+      ),
+  ];
+
+  late final double _widestLabel = _labels.fold(
+    0.0,
+    (widest, label) => label.width > widest ? label.width : widest,
+  );
 
   /// Room either side so labels at the ends of the Bar aren't clipped.
   static const _inset = 24.0;
@@ -95,14 +109,8 @@ class _TimelinePainter extends CustomPainter {
   static const _labelGap = 8.0;
 
   /// The Timeline width at which every Grid Line's label fits.
-  static double widthToLabelEvery(BarLayout layout, TextStyle textStyle) {
-    final bold = textStyle.copyWith(fontWeight: FontWeight.bold);
-    final widest = layout.gridLines.fold(0.0, (widest, line) {
-      final width = _layoutText('${line.position}', bold).width;
-      return width > widest ? width : widest;
-    });
-    return layout.gridLines.length * (widest + _labelGap) + 2 * _inset;
-  }
+  double widthToLabelEveryGridLine() =>
+      layout.gridLines.length * (_widestLabel + _labelGap) + 2 * _inset;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -176,9 +184,9 @@ class _TimelinePainter extends CustomPainter {
     _paintGridLineLabels(canvas, barWidth, x);
   }
 
-  /// Labels every n-th Grid Line, choosing the smallest n at which the
-  /// labels don't overlap, from spacings that keep the labels in step with
-  /// the Beats.
+  /// Labels every Grid Line, or when thinning, every n-th one: the smallest
+  /// n at which the labels don't overlap, from strides that keep the labels
+  /// in step with the Beats.
   void _paintGridLineLabels(
     Canvas canvas,
     double barWidth,
@@ -187,27 +195,18 @@ class _TimelinePainter extends CustomPainter {
     final lines = layout.gridLines;
     if (lines.isEmpty) return;
 
-    final painters = [
-      for (final line in lines)
-        _layoutText(
-          '${line.position}',
-          textStyle.copyWith(
-            color: line.position.isInexact ? colours.highlight : colours.label,
-            fontWeight: line.position.isInexact ? FontWeight.bold : null,
-          ),
-        ),
-    ];
-    final widest = painters.fold(0.0, (w, p) => w > p.width ? w : p.width);
-    final spacing = lines.length > 1
+    final stepWidth = lines.length > 1
         ? (lines[1].barFraction - lines[0].barFraction) * barWidth
         : barWidth;
-    final every = _beatAlignedStrides(lines).firstWhere(
-      (n) => n * spacing >= widest + _labelGap,
-      orElse: () => lines.length,
-    );
+    final labelStride = labelEveryGridLine
+        ? 1
+        : _beatAlignedStrides(lines).firstWhere(
+            (n) => n * stepWidth >= _widestLabel + _labelGap,
+            orElse: () => lines.length,
+          );
 
-    for (var i = 0; i < lines.length; i += every) {
-      final painter = painters[i];
+    for (var i = 0; i < lines.length; i += labelStride) {
+      final painter = _labels[i];
       painter.paint(
         canvas,
         Offset(x(lines[i].barFraction) - painter.width / 2, _labelTop),
@@ -222,11 +221,17 @@ class _TimelinePainter extends CustomPainter {
       for (var i = 0; i < lines.length; i++)
         if (lines[i].beat != null) i,
     ];
-    final period = onBeat.length > 1 ? onBeat[1] - onBeat[0] : lines.length;
-    for (var n = 1; n < period; n++) {
-      if (period % n == 0) yield n;
+    final gridLinesBetweenOnBeatLines = onBeat.length > 1
+        ? onBeat[1] - onBeat[0]
+        : lines.length;
+    for (var n = 1; n < gridLinesBetweenOnBeatLines; n++) {
+      if (gridLinesBetweenOnBeatLines % n == 0) yield n;
     }
-    for (var n = period; n < lines.length; n += period) {
+    for (
+      var n = gridLinesBetweenOnBeatLines;
+      n < lines.length;
+      n += gridLinesBetweenOnBeatLines
+    ) {
       yield n;
     }
   }
@@ -249,5 +254,8 @@ class _TimelinePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_TimelinePainter old) =>
-      old.layout != layout || old.textStyle != textStyle;
+      old.layout != layout ||
+      old.labelEveryGridLine != labelEveryGridLine ||
+      old.textStyle != textStyle ||
+      old.colours != colours;
 }

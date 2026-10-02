@@ -12,12 +12,11 @@ class StandardStepsTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final highlight = HelperColors.of(context).highlight;
+    final highlightStyle = HelperColors.of(context).highlightStyle;
     final steps = standardStepsIn44();
 
-    TextStyle? styleFor(Quantize quantize) => quantize == current
-        ? TextStyle(color: highlight, fontWeight: FontWeight.bold)
-        : null;
+    TextStyle? styleFor(Quantize quantize) =>
+        quantize == current ? highlightStyle : null;
 
     Widget cell(String text, [TextStyle? style]) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

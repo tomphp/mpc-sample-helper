@@ -12,7 +12,7 @@ class GridLineTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final highlight = HelperColors.of(context).highlight;
+    final highlightStyle = HelperColors.of(context).highlightStyle;
     return DataTable(
       columns: const [
         DataColumn(label: Text('Grid Line'), numeric: true),
@@ -21,21 +21,16 @@ class GridLineTable extends StatelessWidget {
       ],
       rows: [
         for (final line in gridLines)
-          DataRow(
-            cells: [
-              DataCell(Text('${line.number}')),
-              DataCell(
-                Text(
-                  '${line.position}',
-                  style: line.position.isInexact
-                      ? TextStyle(color: highlight, fontWeight: FontWeight.bold)
-                      : null,
-                ),
-              ),
-              DataCell(Text(line.beat == null ? '' : '${line.beat}')),
-            ],
-          ),
+          _row(line, line.position.isInexact ? highlightStyle : null),
       ],
     );
   }
+
+  DataRow _row(GridLine line, TextStyle? style) => DataRow(
+    cells: [
+      DataCell(Text('${line.number}', style: style)),
+      DataCell(Text('${line.position}', style: style)),
+      DataCell(Text(line.beat == null ? '' : '${line.beat}', style: style)),
+    ],
+  );
 }

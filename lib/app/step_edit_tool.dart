@@ -13,14 +13,13 @@ class StepEditTool extends StatefulWidget {
 }
 
 class _StepEditToolState extends State<StepEditTool> {
-  int _beats = 4;
-  int _noteValue = 4;
+  TimeSignature _timeSignature = TimeSignature.standard;
   Quantize _quantize = Quantize.sixteenth;
   bool _zoomedIn = false;
 
   @override
   Widget build(BuildContext context) {
-    final layout = layoutBar(TimeSignature(_beats, _noteValue), _quantize);
+    final layout = layoutBar(_timeSignature, _quantize);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -33,33 +32,40 @@ class _StepEditToolState extends State<StepEditTool> {
             runSpacing: 12,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              _IntDropdown(
+              _Dropdown<int>(
                 label: 'Beats',
-                values: [for (var beats = 1; beats <= 16; beats++) beats],
-                selected: _beats,
-                onSelected: (beats) => setState(() => _beats = beats),
+                values: TimeSignature.beatChoices,
+                selected: _timeSignature.beats,
+                labelOf: (beats) => '$beats',
+                onSelected: (beats) => setState(
+                  () => _timeSignature = TimeSignature(
+                    beats,
+                    _timeSignature.noteValue,
+                  ),
+                ),
               ),
               const Text('/'),
-              _IntDropdown(
+              _Dropdown<int>(
                 label: 'Note value',
-                values: const [4, 8],
-                selected: _noteValue,
-                onSelected: (value) => setState(() => _noteValue = value),
+                values: TimeSignature.noteValueChoices,
+                selected: _timeSignature.noteValue,
+                labelOf: (noteValue) => '$noteValue',
+                onSelected: (noteValue) => setState(
+                  () => _timeSignature = TimeSignature(
+                    _timeSignature.beats,
+                    noteValue,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          DropdownMenu<Quantize>(
-            label: const Text('Q'),
-            initialSelection: _quantize,
-            requestFocusOnTap: false,
-            dropdownMenuEntries: [
-              for (final quantize in Quantize.values)
-                DropdownMenuEntry(value: quantize, label: quantize.label),
-            ],
-            onSelected: (quantize) {
-              if (quantize != null) setState(() => _quantize = quantize);
-            },
+          _Dropdown<Quantize>(
+            label: 'Q',
+            values: Quantize.values,
+            selected: _quantize,
+            labelOf: (quantize) => quantize.label,
+            onSelected: (quantize) => setState(() => _quantize = quantize),
           ),
           const SizedBox(height: 16),
           Align(
@@ -87,28 +93,30 @@ class _StepEditToolState extends State<StepEditTool> {
   }
 }
 
-class _IntDropdown extends StatelessWidget {
-  const _IntDropdown({
+class _Dropdown<T> extends StatelessWidget {
+  const _Dropdown({
     required this.label,
     required this.values,
     required this.selected,
+    required this.labelOf,
     required this.onSelected,
   });
 
   final String label;
-  final List<int> values;
-  final int selected;
-  final ValueChanged<int> onSelected;
+  final List<T> values;
+  final T selected;
+  final String Function(T) labelOf;
+  final ValueChanged<T> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    return DropdownMenu<int>(
+    return DropdownMenu<T>(
       label: Text(label),
       initialSelection: selected,
       requestFocusOnTap: false,
       dropdownMenuEntries: [
         for (final value in values)
-          DropdownMenuEntry(value: value, label: '$value'),
+          DropdownMenuEntry(value: value, label: labelOf(value)),
       ],
       onSelected: (value) {
         if (value != null) onSelected(value);
