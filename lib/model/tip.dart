@@ -1,8 +1,9 @@
 import 'package:yaml/yaml.dart';
 
 import 'control.dart';
+import 'data_file.dart';
 
-/// Part of a line of Tip text: plain words or a Control.
+/// Part of a line of Tip text: plain words or a Control marker.
 sealed class TipSegment {
   const TipSegment();
 }
@@ -22,15 +23,16 @@ class PlainText extends TipSegment {
   String toString() => text;
 }
 
-/// A Control named in Tip text, drawn as a keycap.
-class ControlMention extends TipSegment {
-  const ControlMention(this.control);
+/// A Control written in square brackets in Tip text, e.g. "[K2]"; drawn
+/// as a keycap.
+class ControlMarker extends TipSegment {
+  const ControlMarker(this.control);
 
   final ControlRef control;
 
   @override
   bool operator ==(Object other) =>
-      other is ControlMention && other.control == control;
+      other is ControlMarker && other.control == control;
 
   @override
   int get hashCode => control.hashCode;
@@ -101,16 +103,15 @@ List<Tip> parseTips(String yaml) {
 const _tipKeys = {'title', 'outcome', 'steps', 'note'};
 
 Tip _parseTip(int number, Object? tip) {
-  final title = tip is YamlMap ? tip['title'] : null;
-  if (tip is! YamlMap || title is! String || title.trim().isEmpty) {
+  if (tip is! YamlMap) {
+    throw TipDataException('Tip $number: expected title, outcome and steps');
+  }
+  final title = tip['title'];
+  if (title is! String || title.trim().isEmpty) {
     throw TipDataException('Tip $number has no title');
   }
   final where = 'Tip $number "$title"';
-  for (final key in tip.keys) {
-    if (!_tipKeys.contains(key)) {
-      throw TipDataException('$where: unknown key "$key"');
-    }
-  }
+  checkKeys(where, tip, _tipKeys, TipDataException.new);
   final outcome = tip['outcome'];
   if (outcome is! String || outcome.trim().isEmpty) {
     throw TipDataException('$where: missing outcome');
@@ -131,9 +132,9 @@ Tip _parseTip(int number, Object? tip) {
   );
 }
 
-final _mentionPattern = RegExp(r'\[([^\[\]]*)\]');
+final _markerPattern = RegExp(r'\[([^\[\]]*)\]');
 
-/// Splits text into plain words and bracketed Controls, e.g. "[K2]".
+/// Splits text into plain words and Control markers, e.g. "[K2]".
 TipLine _parseLine(String where, Object? text) {
   if (text is! String) throw TipDataException('$where: must be text');
   final segments = <TipSegment>[];
@@ -146,22 +147,18 @@ TipLine _parseLine(String where, Object? text) {
   }
 
   var plainStart = 0;
-  for (final mention in _mentionPattern.allMatches(text)) {
-    addPlain(text.substring(plainStart, mention.start));
-    segments.add(ControlMention(_parseMention(where, mention.group(1)!)));
-    plainStart = mention.end;
+  for (final marker in _markerPattern.allMatches(text)) {
+    addPlain(text.substring(plainStart, marker.start));
+    segments.add(ControlMarker(_parseMarker(where, marker.group(1)!)));
+    plainStart = marker.end;
   }
   addPlain(text.substring(plainStart));
   return TipLine(segments);
 }
 
-ControlRef _parseMention(String where, String reference) {
+ControlRef _parseMarker(String where, String reference) {
   if (reference.trim().isEmpty) {
     throw TipDataException('$where: empty Control marker');
   }
-  try {
-    return ControlRef.parse(reference.trim());
-  } on UnknownControlException catch (error) {
-    throw TipDataException('$where: unknown Control "${error.reference}"');
-  }
+  return parseControlIn(where, reference.trim(), TipDataException.new);
 }

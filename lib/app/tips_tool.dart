@@ -55,9 +55,7 @@ class _TipEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted = TextStyle(
-      color: Theme.of(context).colorScheme.onSurfaceVariant,
-    );
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     return Container(
       margin: const EdgeInsets.only(top: 12),
       padding: const EdgeInsets.all(12),
@@ -70,7 +68,7 @@ class _TipEntry extends StatelessWidget {
         children: [
           Text(tip.title, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 4),
-          Text(tip.outcome, style: muted),
+          Text(tip.outcome, style: TextStyle(color: muted)),
           for (final (index, step) in tip.steps.indexed)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -85,14 +83,18 @@ class _TipEntry extends StatelessWidget {
             ),
           if (tip.note case final note?)
             Padding(
+              key: const Key('tip-note'),
               padding: const EdgeInsets.only(top: 12),
-              child: _LineText(note, style: muted),
+              child: _LineText(note, style: TextStyle(color: muted)),
             ),
         ],
       ),
     );
   }
 }
+
+/// Tall enough to read a keycap's label, short enough to keep lines tight.
+const _keycapMaxHeight = 30.0;
 
 /// A step or note, with its Controls drawn as keycaps among the words.
 class _LineText extends StatelessWidget {
@@ -109,11 +111,11 @@ class _LineText extends StatelessWidget {
           for (final segment in line.segments)
             switch (segment) {
               PlainText(:final text) => TextSpan(text: text),
-              ControlMention(:final control) => WidgetSpan(
+              ControlMarker(:final control) => WidgetSpan(
                 alignment: PlaceholderAlignment.middle,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: ControlKeycap(control),
+                  child: ControlKeycap(control, maxHeight: _keycapMaxHeight),
                 ),
               ),
             },

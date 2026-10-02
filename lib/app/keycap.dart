@@ -40,12 +40,25 @@ class Keycap extends StatelessWidget {
 /// A drawing of a Control as it looks on the front panel, with no action
 /// word.
 class ControlKeycap extends StatelessWidget {
-  const ControlKeycap(this.control, {super.key});
+  const ControlKeycap(this.control, {super.key, this.maxHeight});
 
   final ControlRef control;
 
+  /// Shrinks a taller drawing to this height, e.g. to sit inline with text;
+  /// drawn at full size when null.
+  final double? maxHeight;
+
   @override
-  Widget build(BuildContext context) => switch (control) {
+  Widget build(BuildContext context) {
+    final maxHeight = this.maxHeight;
+    if (maxHeight == null) return _drawing();
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: maxHeight),
+      child: FittedBox(fit: BoxFit.scaleDown, child: _drawing()),
+    );
+  }
+
+  Widget _drawing() => switch (control) {
     SingleControl(:final control) => switch (control.kind) {
       ControlKind.button => _Button(control),
       ControlKind.knob || ControlKind.encoder => _Knob(control),

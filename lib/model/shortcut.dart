@@ -1,6 +1,7 @@
 import 'package:yaml/yaml.dart';
 
 import 'control.dart';
+import 'data_file.dart';
 
 /// What a Gesture step does to its Control.
 enum GestureAction {
@@ -79,7 +80,10 @@ ShortcutMode _parseMode(int number, Object? mode) {
   if (mode is! YamlMap || name is! String || name.trim().isEmpty) {
     throw ShortcutDataException('Mode $number has no name');
   }
-  _checkKeys('Mode "$name"', mode, const {'mode', 'shortcuts'});
+  checkKeys('Mode "$name"', mode, const {
+    'mode',
+    'shortcuts',
+  }, ShortcutDataException.new);
   final shortcuts = mode['shortcuts'];
   if (shortcuts is! YamlList) {
     throw ShortcutDataException('Mode "$name" has no "shortcuts" list');
@@ -94,7 +98,11 @@ Shortcut _parseShortcut(String where, Object? shortcut) {
   if (shortcut is! YamlMap) {
     throw ShortcutDataException('$where: expected gesture and effect');
   }
-  _checkKeys(where, shortcut, const {'gesture', 'condition', 'effect'});
+  checkKeys(where, shortcut, const {
+    'gesture',
+    'condition',
+    'effect',
+  }, ShortcutDataException.new);
   final effect = shortcut['effect'];
   if (effect is! String || effect.trim().isEmpty) {
     throw ShortcutDataException('$where: missing effect');
@@ -114,15 +122,6 @@ Shortcut _parseShortcut(String where, Object? shortcut) {
   );
 }
 
-/// Rejects misspelt keys, which would otherwise be silently ignored.
-void _checkKeys(String where, YamlMap map, Set<String> allowed) {
-  for (final key in map.keys) {
-    if (!allowed.contains(key)) {
-      throw ShortcutDataException('$where: unknown key "$key"');
-    }
-  }
-}
-
 GestureStep _parseStep(String where, Object? step) {
   if (step is! YamlMap || step.length != 1) {
     throw ShortcutDataException(
@@ -137,10 +136,5 @@ GestureStep _parseStep(String where, Object? step) {
   return GestureStep(action, _parseControl(where, '$value'));
 }
 
-ControlRef _parseControl(String where, String reference) {
-  try {
-    return ControlRef.parse(reference);
-  } on UnknownControlException catch (error) {
-    throw ShortcutDataException('$where: unknown Control "${error.reference}"');
-  }
-}
+ControlRef _parseControl(String where, String reference) =>
+    parseControlIn(where, reference, ShortcutDataException.new);

@@ -55,26 +55,26 @@ tips:
     expect(tip.steps, const [
       TipLine([
         PlainText('Hold '),
-        ControlMention(SingleControl(Control.shift)),
+        ControlMarker(SingleControl(Control.shift)),
         PlainText(' and press '),
-        ControlMention(Pad(14)),
+        ControlMarker(Pad(14)),
       ]),
       TipLine([
-        ControlMention(SingleControl(Control.k2)),
-        ControlMention(SingleControl(Control.b3)),
+        ControlMarker(SingleControl(Control.k2)),
+        ControlMarker(SingleControl(Control.b3)),
         PlainText(' then '),
-        ControlMention(SingleControl(Control.stop)),
+        ControlMarker(SingleControl(Control.stop)),
       ]),
     ]);
     expect(
       tip.note,
       const TipLine([
         PlainText('Use '),
-        ControlMention(PadRange(1, 8)),
+        ControlMarker(PadRange(1, 8)),
         PlainText(', '),
-        ControlMention(AnyPad()),
+        ControlMarker(AnyPad()),
         PlainText(' or '),
-        ControlMention(
+        ControlMarker(
           ControlChoice([
             SingleControl(Control.k1),
             SingleControl(Control.k2),
@@ -99,6 +99,13 @@ tips:
 
     test('no top-level tips list', () {
       expectError('tip: []', 'expected a top-level "tips" list');
+    });
+
+    test('a Tip that is not a map', () {
+      expectError('''
+tips:
+  - just text
+''', 'Tip 1: expected title, outcome and steps');
     });
 
     test('a missing title', () {
