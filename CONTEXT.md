@@ -72,6 +72,10 @@ _Avoid_: Secondary label, alt function
 A useful action reached by a gesture on one or more Controls whose effect is printed on the front panel neither as a Control's label nor as its Shift Label (e.g. pressing STOP twice to stop all audio).
 _Avoid_: Hidden function, key combo, hotkey
 
+**Gesture**:
+The ordered actions on Controls that trigger a Shortcut (e.g. hold ERASE, press a pad), optionally under a condition such as "while stopped".
+_Avoid_: Combo, chord, key sequence
+
 ### App
 
 **Tool**:
